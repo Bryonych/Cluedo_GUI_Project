@@ -91,16 +91,16 @@ public class Game extends Observable
                 else if (row < 8 && col > 11 && col < 18){
                     squares[row][col] = new Cell(Cell.Type.BALLROOM, col, row);
                 }
-                else if (row < 6 && col > 22){
+                else if (row < 6 && col > 21){
                     squares[row][col] = new Cell(Cell.Type.CONSERVATORY, col, row);
                 }
                 else if (row > 10 && row < 18 && col < 9){
                     squares[row][col] = new Cell(Cell.Type.DINING, col, row);
                 }
-                else if (row > 9 && row < 15 && col > 22){
+                else if (row > 9 && row < 15 && col > 21){
                     squares[row][col] = new Cell(Cell.Type.BILLIARD, col, row);
                 }
-                else if (row > 18 && row < 22 && col > 20){
+                else if (row > 17 && row < 23 && col > 20){
                     squares[row][col] = new Cell(Cell.Type.LIBRARY, col, row);
                 }
                 else if (row > 22 && col < 8){
