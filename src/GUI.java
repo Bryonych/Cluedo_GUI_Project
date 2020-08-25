@@ -9,13 +9,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
@@ -24,8 +17,8 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     private static int numPlayer;
     private ArrayList<Character> players;
     private static final int OFFSET = 50;
-    private static final int WIDTH = 1400;
-    private static final int HEIGHT = 1000;
+    private static final int WIDTH = 1600;
+    private static final int HEIGHT = 1020;
     private static Image hallway = new ImageIcon("Images/yellowsquare.png").getImage();
     private static Image wall = new ImageIcon("Images/wallimage.png").getImage();
     private static Image Ballroom = new ImageIcon("Images/Ballroom.png").getImage();
@@ -45,10 +38,19 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     private static Image revolver = new ImageIcon("Images/revolver.PNG").getImage();
     private static Image rope = new ImageIcon("Images/rope.PNG").getImage();
     private static Image wrench = new ImageIcon("Images/wrench.PNG").getImage();
+    private static Image one = new ImageIcon("Images/one.PNG").getImage();
+    private static Image two = new ImageIcon("Images/two.PNG").getImage();
+    private static Image three = new ImageIcon("Images/three.PNG").getImage();
+    private static Image four = new ImageIcon("Images/four.PNG").getImage();
+    private static Image five = new ImageIcon("Images/five.PNG").getImage();
+    private static Image six = new ImageIcon("Images/six.PNG").getImage();
     private Game game = null;
+    private boolean selected = false;
+    private int number = 3;
     
     long now = System.currentTimeMillis();
     long timeCheck;
+
 
     public GUI(Game game){
         this.game = game;
@@ -62,11 +64,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
         setLayout(new BorderLayout());
         setTitle("Cluedo");
         setSize(WIDTH, HEIGHT);
-
         createMenu();
-      // checknumPlayers();
-
-        // createBoardArea();
         setLocationRelativeTo(null);
         setVisible(true);
         
@@ -91,20 +89,185 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
         			now = System.currentTimeMillis();
         	}
         });
-        
-    }
+              
+        add(buttonPanel(), BorderLayout.LINE_END);
+        add(boardPanel); 
 
-   // /**
-     // * Pick number of players to play  
-     // */
-    // public void checknumPlayers() {
-       // Integer[] numOptions = { 2,3,4,5,6};
-        // //number of players 
-        // numPlayer = (int) JOptionPane.showInputDialog(null, "How many players?", "Cluedo",
-            // JOptionPane.QUESTION_MESSAGE, null, numOptions, numOptions[0]);
-        // // Create player list
-    // }
-  //  public void setPlayers() { }
+    }
+    
+    JPanel buttonPanel() {
+        JPanel container = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));            
+        JPanel buttonPanel = new JPanel();       
+        buttonPanel.setLayout(new GridLayout(1, 3));
+        JButton newGame = new JButton("New Game");
+        newGame.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent ev) {
+        		JPanel playersPopUp = new JPanel();
+        		playersPopUp.add(new JLabel("How many players?"));
+        		DefaultComboBoxModel<Integer> selections = new DefaultComboBoxModel<Integer>();
+        		selections.addElement(2);
+        		selections.addElement(3);
+        		selections.addElement(4);
+        		selections.addElement(5);
+        		selections.addElement(6);
+        		JComboBox<Integer> combo = new JComboBox(selections);
+        		playersPopUp.add(combo);
+        		int result = JOptionPane.showConfirmDialog(null, playersPopUp, "Number", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        		switch (result) {
+        		case JOptionPane.OK_OPTION:
+        			int answer = (Integer)combo.getSelectedItem();
+        			game.setNumPlayers(answer);
+        			playerSelection(answer);
+        			break;
+        		}
+        	}
+        });
+        newGame.setPreferredSize(new Dimension(100, 40));
+        buttonPanel.add(newGame);
+        container.add(buttonPanel);
+        container.setMaximumSize(new Dimension(500, 50));
+        return container;  
+    }
+    
+    public void playerSelection(int number) {
+    	JRadioButton scarlett = new JRadioButton("Miss Scarlett");
+    	JRadioButton mustard = new JRadioButton("Colonel Mustard");
+    	JRadioButton white = new JRadioButton("Mrs White");
+    	JRadioButton green = new JRadioButton("Mr Green");
+    	JRadioButton peacock = new JRadioButton("Mrs Peacock");
+    	JRadioButton plum = new JRadioButton("Professor Plum");
+    	JPanel characterPopUp = new JPanel();
+    	characterPopUp.add(new JLabel("Next player, please select your character\n"));
+    	characterPopUp.setLayout(new BoxLayout(characterPopUp, BoxLayout.Y_AXIS));
+    	characterPopUp.add(scarlett);
+    	characterPopUp.add(mustard);
+    	characterPopUp.add(white);
+    	characterPopUp.add(green);
+    	characterPopUp.add(peacock);
+    	characterPopUp.add(plum);
+		scarlett.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				game.setPlayers("Miss Scarlet");
+				scarlett.setEnabled(false);
+				selected = true;
+			}
+		});
+		mustard.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				game.setPlayers("Col Mustard");
+				mustard.setEnabled(false);
+				selected = true;
+			}
+		});
+		white.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				game.setPlayers("Mrs White");
+				white.setEnabled(false);
+				selected = true;
+			}
+		});
+		green.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				game.setPlayers("Mr Green");
+				green.setEnabled(false);
+				selected = true;
+			}
+		});
+		peacock.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				game.setPlayers("Mrs Peacock");
+				peacock.setEnabled(false);
+				selected = true;
+			}
+		});
+		plum.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				game.setPlayers("Prof Plum");
+				plum.setEnabled(false);
+				selected = true;
+			}
+		});
+		
+    	for (int i = 0; i < number; i++) {
+    		selected = false;
+    		JOptionPane.showMessageDialog(null,  characterPopUp);
+    		if (!selected) i--;
+    	}
+    	
+    	manageTurns();
+    }
+    
+    public void manageTurns() {
+    	game.dealCards();
+        while(!game.gameWon) {
+        	for (Character play : game.getPlayers()) {
+        		JPanel diceRoll = new JPanel();
+                diceRoll.add(new JLabel(play.getName() + " press OK to roll the dice"));       
+        		JOptionPane.showMessageDialog(null, diceRoll);      			
+        		number = game.rollDice();
+        		display();
+        	}
+        }
+    }
+    
+
+    JPanel dicePanel = new JPanel() {
+    	@Override
+    	protected void paintComponent(Graphics g) {
+    		if (number == 2) {
+    			g.drawImage(one, 0, 0, 100, 100, null);
+    			g.drawImage(one, 110, 0, 100, 100, null);
+    		}
+    		else if (number == 3) {
+    			g.drawImage(one, 0, 0, 100, 100, null);
+    			g.drawImage(two, 110, 0, 100, 100, null);
+    		}
+    		else if (number == 4) {
+    			g.drawImage(two, 0, 0, 100, 100, null);
+    			g.drawImage(two, 110, 0, 100, 100, null);
+    		}
+    		else if (number == 5) {
+    			g.drawImage(two, 0, 0, 100, 100, null);
+    			g.drawImage(three, 110, 0, 100, 100, null);
+    		}
+    		else if (number == 6) {
+    			g.drawImage(four, 0, 0, 100, 100, null);
+    			g.drawImage(two, 110, 0, 100, 100, null);
+    		}
+    		else if (number == 7) {
+    			g.drawImage(six, 0, 0, 100, 100, null);
+    			g.drawImage(one, 110, 0, 100, 100, null);
+    		}
+    		else if (number == 8) {
+    			g.drawImage(three, 0, 0, 100, 100, null);
+    			g.drawImage(five, 110, 0, 100, 100, null);
+    		}
+    		else if (number == 9) {
+    			g.drawImage(four, 0, 0, 100, 100, null);
+    			g.drawImage(five, 110, 0, 100, 100, null);
+    		}
+    		else if (number == 10) {
+    			g.drawImage(five, 0, 0, 100, 100, null);
+    			g.drawImage(five, 110, 0, 100, 100, null);
+    		}
+    		else if (number == 11) {
+    			g.drawImage(six, 0, 0, 100, 100, null);
+    			g.drawImage(five, 110, 0, 100, 100, null);
+    		}
+    		else if (number == 12) {
+    			g.drawImage(six, 0, 0, 100, 100, null);
+    			g.drawImage(six, 110, 0, 100, 100, null);
+    		}
+    	}
+
+    };
+
 
     public void update(Observable obs, Object obj){
         if (obs instanceof Game){
@@ -158,108 +321,114 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     }
 
 
+    JPanel boardPanel = new JPanel() {
+    	@Override
+    	protected void paintComponent(Graphics g) {
+    		super.paintComponent(g);
+    		Cell[][] c = game.getBoard().getCells();
+    		for(int i =0; i< 30; i++) {
+    			int y = OFFSET + (i * 30);
+    			for(int j = 0;j< 30; j++) {
+    				int x = OFFSET + (j * 30);
+                    if(c[j][i].getType().equals(Cell.Type.HALLWAY)) {
+                        g.drawImage(hallway, y, x, 25, 25, null);
+                    } 
+                    else if(c[j][i].getType().equals(Cell.Type.WALL)) {
+                        g.drawImage(wall, y, x, 25, 25, null);
+                    }
+                    else if(c[j][i].getType().equals(Cell.Type.BALLROOM)) {
+                        g.drawImage(Ballroom, y, x, 25, 25, null);
+                    }
+                    else if(c[j][i].getType().equals(Cell.Type.KITCHEN)) {
+                        g.drawImage(Kitchen, y, x, 25, 25, null);
+                    }
+                    else if(c[j][i].getType().equals(Cell.Type.STUDY)) {
+                        g.drawImage(study, y, x, 25, 25, null);
+                    }
+                    else if(c[j][i].getType().equals(Cell.Type.CONSERVATORY)) {
+                        g.drawImage(conservatory, y, x, 25, 25, null);
+                    }
+                    else if(c[j][i].getType().equals(Cell.Type.BILLIARD)) {
+                        g.drawImage(billard, y, x, 25, 25, null);
+                    }
+                    else if(c[j][i].getType().equals(Cell.Type.DOOR)) {
+                        g.drawImage(door, y, x, 25, 25, null);
+                    }
+                    else if(c[j][i].getType().equals(Cell.Type.DINING)) {
+                        g.drawImage(dinningRoom, y, x, 25, 25, null);
+                    }
+                    else if(c[j][i].getType().equals(Cell.Type.HALL)) {
+                        g.drawImage(Hall, y, x, 25, 25, null);
+                    }
+                    else if(c[j][i].getType().equals(Cell.Type.LIBRARY)) {
+                        g.drawImage(Library, y, x, 25, 25, null);
+                    }
+                    else if(c[j][i].getType().equals(Cell.Type.START)) {
+                        g.drawImage(start, y, x, 25, 25, null);
+                    }
+                    else if(c[j][i].getType().equals(Cell.Type.LOUNGE)) {
+                        g.drawImage(lounge, y, x, 25, 25, null);
+                    }
+                    else if(c[j][i].getType().equals(Cell.Type.CANDLESTICK)) {
+                        g.drawImage(candlestick, y, x, 25, 25, null);
+                    }
+                    else if(c[j][i].getType().equals(Cell.Type.DAGGER)) {
+                        g.drawImage(dagger, y, x, 25, 25, null);
+                    }
+                    else if(c[j][i].getType().equals(Cell.Type.LEADPIPE)) {
+                        g.drawImage(leadpipe, y, x, 25, 25, null);
+                    }
+                    else if(c[j][i].getType().equals(Cell.Type.REVOLVER)) {
+                        g.drawImage(revolver, y, x, 25, 25, null);
+                    }
+                    else if(c[j][i].getType().equals(Cell.Type.ROPE)) {
+                        g.drawImage(rope, y, x, 25, 25, null);
+                    }
+                    else if(c[j][i].getType().equals(Cell.Type.SPANNER)) {
+                        g.drawImage(wrench, y, x, 25, 25, null);
+                    }
+                    
+                    if(c[i][j].getType().equals(Cell.Type.WHITE)) {
+        				       				
+        				//System.out.println("x = " + x + ", y = " + y);
+        				g.setColor(Color.WHITE);
+        				g.fillOval(x,y,25,25);
+        				g.setColor(Color.BLACK);
+        				g.drawOval(x,y,25,25);
+        			}
+                    else if(c[i][j].getType().equals(Cell.Type.GREEN)) {
+        				g.setColor(Color.GREEN);
+        				g.fillOval(x,y,25,25);
+        			}
+                    else if(c[i][j].getType().equals(Cell.Type.PEACOCK)) {
+        				g.setColor(Color.BLUE);
+        				g.fillOval(x,y,25,25);
+        			}
+                    else if(c[i][j].getType().equals(Cell.Type.PLUM)) {
+        				g.setColor(Color.MAGENTA);
+        				g.fillOval(x,y,25,25);
+        			}
+                    else if(c[i][j].getType().equals(Cell.Type.SCARLETT)) {
+        				g.setColor(Color.RED);
+        				g.fillOval(x,y,25,25);
+        			}
+                    else if(c[i][j].getType().equals(Cell.Type.MUSTARD)) {
+        				g.setColor(Color.YELLOW);
+        				g.fillOval(x,y,25,25);
+        				g.setColor(Color.BLACK);
+        				g.drawOval(x,y,25,25);
+        			}
 
-    public void paint(Graphics g) {
-    	super.paintComponents(g);
-        Cell[][] c = game.getBoard().getCells();
-        //Board board = new Board(c);
-        //Cell[][] cc = board.getCells();
-        for(int i =0; i< 30; i++) {
-        	int y = OFFSET + (i * 30);
-            for(int j = 0;j< 30; j++) {
-            	int x = OFFSET + (j * 30);
-                if(c[j][i].getType().equals(Cell.Type.HALLWAY)) {
-                    g.drawImage(hallway, y, x, 25, 25, null);
-                } 
-                else if(c[j][i].getType().equals(Cell.Type.WALL)) {
-                    g.drawImage(wall, y, x, 25, 25, null);
-                }
-                else if(c[j][i].getType().equals(Cell.Type.BALLROOM)) {
-                    g.drawImage(Ballroom, y, x, 25, 25, null);
-                }
-                else if(c[j][i].getType().equals(Cell.Type.KITCHEN)) {
-                    g.drawImage(Kitchen, y, x, 25, 25, null);
-                }
-                else if(c[j][i].getType().equals(Cell.Type.STUDY)) {
-                    g.drawImage(study, y, x, 25, 25, null);
-                }
-                else if(c[j][i].getType().equals(Cell.Type.CONSERVATORY)) {
-                    g.drawImage(conservatory, y, x, 25, 25, null);
-                }
-                else if(c[j][i].getType().equals(Cell.Type.BILLIARD)) {
-                    g.drawImage(billard, y, x, 25, 25, null);
-                }
-                else if(c[j][i].getType().equals(Cell.Type.DOOR)) {
-                    g.drawImage(door, y, x, 25, 25, null);
-                }
-                else if(c[j][i].getType().equals(Cell.Type.DINING)) {
-                    g.drawImage(dinningRoom, y, x, 25, 25, null);
-                }
-                else if(c[j][i].getType().equals(Cell.Type.HALL)) {
-                    g.drawImage(Hall, y, x, 25, 25, null);
-                }
-                else if(c[j][i].getType().equals(Cell.Type.LIBRARY)) {
-                    g.drawImage(Library, y, x, 25, 25, null);
-                }
-                else if(c[j][i].getType().equals(Cell.Type.START)) {
-                    g.drawImage(start, y, x, 25, 25, null);
-                }
-                else if(c[j][i].getType().equals(Cell.Type.LOUNGE)) {
-                    g.drawImage(lounge, y, x, 25, 25, null);
-                }
-                else if(c[j][i].getType().equals(Cell.Type.CANDLESTICK)) {
-                    g.drawImage(candlestick, y, x, 25, 25, null);
-                }
-                else if(c[j][i].getType().equals(Cell.Type.DAGGER)) {
-                    g.drawImage(dagger, y, x, 25, 25, null);
-                }
-                else if(c[j][i].getType().equals(Cell.Type.LEADPIPE)) {
-                    g.drawImage(leadpipe, y, x, 25, 25, null);
-                }
-                else if(c[j][i].getType().equals(Cell.Type.REVOLVER)) {
-                    g.drawImage(revolver, y, x, 25, 25, null);
-                }
-                else if(c[j][i].getType().equals(Cell.Type.ROPE)) {
-                    g.drawImage(rope, y, x, 25, 25, null);
-                }
-                else if(c[j][i].getType().equals(Cell.Type.SPANNER)) {
-                    g.drawImage(wrench, y, x, 25, 25, null);
-                }
-                
-                if(c[i][j].getType().equals(Cell.Type.WHITE)) {
-    				
-    				
-    				//System.out.println("x = " + x + ", y = " + y);
-    				g.setColor(Color.WHITE);
-    				g.fillOval(x,y,25,25);
-    				g.setColor(Color.BLACK);
-    				g.drawOval(x,y,25,25);
     			}
-                else if(c[i][j].getType().equals(Cell.Type.GREEN)) {
-    				g.setColor(Color.GREEN);
-    				g.fillOval(x,y,25,25);
-    			}
-                else if(c[i][j].getType().equals(Cell.Type.PEACOCK)) {
-    				g.setColor(Color.BLUE);
-    				g.fillOval(x,y,25,25);
-    			}
-                else if(c[i][j].getType().equals(Cell.Type.PLUM)) {
-    				g.setColor(Color.MAGENTA);
-    				g.fillOval(x,y,25,25);
-    			}
-                else if(c[i][j].getType().equals(Cell.Type.SCARLETT)) {
-    				g.setColor(Color.RED);
-    				g.fillOval(x,y,25,25);
-    			}
-                else if(c[i][j].getType().equals(Cell.Type.MUSTARD)) {
-    				g.setColor(Color.YELLOW);
-    				g.fillOval(x,y,25,25);
-    				g.setColor(Color.BLACK);
-    				g.drawOval(x,y,25,25);
-    			}
-                //g.drawImage(sqaure, 50*i, 50*i, 25, 25, null);
-            }
-        }
+    		}
+    	}
+    };
+    
+
+
+    
+    public int checkNumPlayers() {
+    	return 0;
     }
    
     @Override
@@ -304,6 +473,8 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
      */
     @Override
     public void mouseReleased(MouseEvent e) {
+        // movePlayer from cell to cell
+
     }
 
     /**
@@ -328,14 +499,13 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     public static void main(String[] args){
         Game game = new Game();
         GUI gui = new GUI(game);
-
+        game.setNumPlayers(gui.checkNumPlayers());
         game.addObserver(gui);
         SwingUtilities.invokeLater(new Runnable() {
                 public void run(){
                     gui.display();
                 }
             });
-
     }
     
     protected void  onClick(MouseEvent e) {
@@ -368,3 +538,5 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     	}
     }
 }
+
+

@@ -31,7 +31,7 @@ public class Game extends Observable
     private Card refute;
     private int refutePlayer;
     private Accusation accusation;
-    private boolean gameWon;
+    public boolean gameWon;
     private static boolean roomplay = false;
     private static int numPlayers;
     private boolean suggestionMade = false;
@@ -174,38 +174,46 @@ public class Game extends Observable
         characters.add(scarlett);
         characters.add(mustard);
     }
+    
+    public void setPlayers(String character) {
+    	for (Character c : characters) {
+    		if (c.getName().equals(character)) {
+    			players.add(c);
+    		}
+    	}
+    }
 
     /**
      * Creates the players and adds them to the list
      */
-    public void setPlayers(){
-        int count = 1;
-        Stack<Character> CharacterSelection = new Stack<Character>();
-        CharacterSelection.addAll(characters);
-        int counter = numPlayers;
-        //For each player, allow them to select a character and add them to the players list
-        while (counter != 0) {
-            ArrayList<Character> temp = new ArrayList<Character>();
-            temp.addAll(CharacterSelection);
-            System.out.println("Player "+ count+ " Please Select Your Character");
-            System.out.println("Please press Y for Yes, Any Other letter button to scroll next");
-            Scanner scan;
-            for(int i = 0; i < temp.size();) {
-                System.out.println(temp.get(i).getName());
-                scan = new Scanner(System.in);
-                String read = scan.nextLine().toUpperCase();
-                if(read.contains("Y")) {
-                    CharacterSelection.remove(temp.get(i));
-                    players.add(temp.get(i));
-                    counter--;
-                    count++;
-                    break;
-                } else {
-                    i++;
-                }
-            }
-        }
-    }
+//    public void setPlayers(){
+//        int count = 1;
+//        Stack<Character> CharacterSelection = new Stack<Character>();
+//        CharacterSelection.addAll(characters);
+//        int counter = numPlayers;
+//        //For each player, allow them to select a character and add them to the players list
+//        while (counter != 0) {
+//            ArrayList<Character> temp = new ArrayList<Character>();
+//            temp.addAll(CharacterSelection);
+//            System.out.println("Player "+ count+ " Please Select Your Character");
+//            System.out.println("Please press Y for Yes, Any Other letter button to scroll next");
+//            Scanner scan;
+//            for(int i = 0; i < temp.size();) {
+//                System.out.println(temp.get(i).getName());
+//                scan = new Scanner(System.in);
+//                String read = scan.nextLine().toUpperCase();
+//                if(read.contains("Y")) {
+//                    CharacterSelection.remove(temp.get(i));
+//                    players.add(temp.get(i));
+//                    counter--;
+//                    count++;
+//                    break;
+//                } else {
+//                    i++;
+//                }
+//            }
+//        }
+//    }
     /**
      * Creates all the rooms and sets the cell where the weapon sits in the room
      */
@@ -487,12 +495,24 @@ public class Game extends Observable
             checkNumPlayers();
         }
     }
+    
+    public void setNumPlayers(int number) {
+    	numPlayers = number;
+    }
+    
+    public int getNumPlayers() {
+    	return numPlayers;
+    }
+    
+    public List<Character> getPlayers(){
+    	return Collections.unmodifiableList(players);
+    }
 
     public static void main(String[] args) throws NumberFormatException, IOException{
         Scanner scan = new Scanner(System.in);
         Game game = new Game();
         game.checkNumPlayers();
-        game.setPlayers();
+        //game.setPlayers();
         game.dealCards();
         System.out.flush();
         Cell[][] cell = board.getCells();
@@ -846,3 +866,4 @@ public class Game extends Observable
     }
 
 }
+
