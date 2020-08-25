@@ -16,9 +16,12 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     //private static List<Character> characters = new ArrayList<Character>();
     private static int numPlayer;
     private ArrayList<Character> players;
-    private static final int OFFSET = 50;
-    private static final int WIDTH = 1600;
-    private static final int HEIGHT = 1020;
+    private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    private static final int OFFSET = (screenSize.height < 1000) ? 25 : 50;
+    private static final int WIDTH = screenSize.width;
+    private static final int size = (screenSize.width < 1500) ? 20: 25;
+    private static final int space = (screenSize.height-(100+OFFSET))/30;
+    private static final int HEIGHT = screenSize.height;
     private static Image hallway = new ImageIcon("Images/yellowsquare.png").getImage();
     private static Image wall = new ImageIcon("Images/wallimage.png").getImage();
     private static Image Ballroom = new ImageIcon("Images/Ballroom.png").getImage();
@@ -63,6 +66,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
         setResizable(false);
         setLayout(new BorderLayout());
         setTitle("Cluedo");
+        System.out.println(WIDTH + " " + HEIGHT);
         setSize(WIDTH, HEIGHT);
         createMenu();
         setLocationRelativeTo(null);
@@ -327,65 +331,65 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     		super.paintComponent(g);
     		Cell[][] c = game.getBoard().getCells();
     		for(int i =0; i< 30; i++) {
-    			int y = OFFSET + (i * 30);
+    			int x = OFFSET + (i * space);
     			for(int j = 0;j< 30; j++) {
-    				int x = OFFSET + (j * 30);
-                    if(c[j][i].getType().equals(Cell.Type.HALLWAY)) {
-                        g.drawImage(hallway, y, x, 25, 25, null);
+    				int y = OFFSET + (j * space);
+                    if(c[i][j].getType().equals(Cell.Type.HALLWAY)) {
+                        g.drawImage(hallway, x, y, size, size, null);
                     } 
-                    else if(c[j][i].getType().equals(Cell.Type.WALL)) {
-                        g.drawImage(wall, y, x, 25, 25, null);
+                    else if(c[i][j].getType().equals(Cell.Type.WALL)) {
+                        g.drawImage(wall, x, y, size, size, null);
                     }
-                    else if(c[j][i].getType().equals(Cell.Type.BALLROOM)) {
-                        g.drawImage(Ballroom, y, x, 25, 25, null);
+                    else if(c[i][j].getType().equals(Cell.Type.BALLROOM)) {
+                        g.drawImage(Ballroom, x, y, size, size, null);
                     }
-                    else if(c[j][i].getType().equals(Cell.Type.KITCHEN)) {
-                        g.drawImage(Kitchen, y, x, 25, 25, null);
+                    else if(c[i][j].getType().equals(Cell.Type.KITCHEN)) {
+                        g.drawImage(Kitchen, x, y, size, size, null);
                     }
-                    else if(c[j][i].getType().equals(Cell.Type.STUDY)) {
-                        g.drawImage(study, y, x, 25, 25, null);
+                    else if(c[i][j].getType().equals(Cell.Type.STUDY)) {
+                        g.drawImage(study, x, y, size, size, null);
                     }
-                    else if(c[j][i].getType().equals(Cell.Type.CONSERVATORY)) {
-                        g.drawImage(conservatory, y, x, 25, 25, null);
+                    else if(c[i][j].getType().equals(Cell.Type.CONSERVATORY)) {
+                        g.drawImage(conservatory, x, y, size, size, null);
                     }
-                    else if(c[j][i].getType().equals(Cell.Type.BILLIARD)) {
-                        g.drawImage(billard, y, x, 25, 25, null);
+                    else if(c[i][j].getType().equals(Cell.Type.BILLIARD)) {
+                        g.drawImage(billard, x, y, size, size, null);
                     }
-                    else if(c[j][i].getType().equals(Cell.Type.DOOR)) {
-                        g.drawImage(door, y, x, 25, 25, null);
+                    else if(c[i][j].getType().equals(Cell.Type.DOOR)) {
+                        g.drawImage(door, x, y, size, size, null);
                     }
-                    else if(c[j][i].getType().equals(Cell.Type.DINING)) {
-                        g.drawImage(dinningRoom, y, x, 25, 25, null);
+                    else if(c[i][j].getType().equals(Cell.Type.DINING)) {
+                        g.drawImage(dinningRoom, x, y, size, size, null);
                     }
-                    else if(c[j][i].getType().equals(Cell.Type.HALL)) {
-                        g.drawImage(Hall, y, x, 25, 25, null);
+                    else if(c[i][j].getType().equals(Cell.Type.HALL)) {
+                        g.drawImage(Hall, x, y, size, size, null);
                     }
-                    else if(c[j][i].getType().equals(Cell.Type.LIBRARY)) {
-                        g.drawImage(Library, y, x, 25, 25, null);
+                    else if(c[i][j].getType().equals(Cell.Type.LIBRARY)) {
+                        g.drawImage(Library, x, y, size, size, null);
                     }
-                    else if(c[j][i].getType().equals(Cell.Type.START)) {
-                        g.drawImage(start, y, x, 25, 25, null);
+                    else if(c[i][j].getType().equals(Cell.Type.START)) {
+                        g.drawImage(start, x, y, size, size, null);
                     }
-                    else if(c[j][i].getType().equals(Cell.Type.LOUNGE)) {
-                        g.drawImage(lounge, y, x, 25, 25, null);
+                    else if(c[i][j].getType().equals(Cell.Type.LOUNGE)) {
+                        g.drawImage(lounge, x, y, size, size, null);
                     }
-                    else if(c[j][i].getType().equals(Cell.Type.CANDLESTICK)) {
-                        g.drawImage(candlestick, y, x, 25, 25, null);
+                    else if(c[i][j].getType().equals(Cell.Type.CANDLESTICK)) {
+                        g.drawImage(candlestick, x, y, size, size, null);
                     }
-                    else if(c[j][i].getType().equals(Cell.Type.DAGGER)) {
-                        g.drawImage(dagger, y, x, 25, 25, null);
+                    else if(c[i][j].getType().equals(Cell.Type.DAGGER)) {
+                        g.drawImage(dagger, x, y, size, size, null);
                     }
-                    else if(c[j][i].getType().equals(Cell.Type.LEADPIPE)) {
-                        g.drawImage(leadpipe, y, x, 25, 25, null);
+                    else if(c[i][j].getType().equals(Cell.Type.LEADPIPE)) {
+                        g.drawImage(leadpipe, x, y, size, size, null);
                     }
-                    else if(c[j][i].getType().equals(Cell.Type.REVOLVER)) {
-                        g.drawImage(revolver, y, x, 25, 25, null);
+                    else if(c[i][j].getType().equals(Cell.Type.REVOLVER)) {
+                        g.drawImage(revolver, x, y, size, size, null);
                     }
-                    else if(c[j][i].getType().equals(Cell.Type.ROPE)) {
-                        g.drawImage(rope, y, x, 25, 25, null);
+                    else if(c[i][j].getType().equals(Cell.Type.ROPE)) {
+                        g.drawImage(rope, x, y, size, size, null);
                     }
-                    else if(c[j][i].getType().equals(Cell.Type.SPANNER)) {
-                        g.drawImage(wrench, y, x, 25, 25, null);
+                    else if(c[i][j].getType().equals(Cell.Type.SPANNER)) {
+                        g.drawImage(wrench, x, y, size, size, null);
                     }
                     
                     if(c[i][j].getType().equals(Cell.Type.WHITE)) {
