@@ -833,6 +833,16 @@ public class Game extends Observable
             }
         }
     }
+    
+    public Character getCurrentChar() {
+    	Character cur = null;
+    	for(Character ch : characters) {
+    		//TEST CODE - passing character to GUI for movement
+    		if(ch.getCharacterType() == Cell.Type.MUSTARD) {
+    			cur = ch;
+    		}
+    	}
+    	return cur;
+    }
 
 }
-
