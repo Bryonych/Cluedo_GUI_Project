@@ -32,7 +32,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     private static final int HEIGHT = screenSize.height;
 //    private static final int OFFSET = 50;
 //    private static final int WIDTH = 1600;
-//    private static final int HEIGHT = 1020;
+//    private static final int HEIGHT = 1020;   
     
     private static Image hallway = new ImageIcon("Images/yellowsquare.png").getImage();
     private static Image wall = new ImageIcon("Images/wallimage.png").getImage();
@@ -66,18 +66,25 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     private JPanel cardPanel = new JPanel();
     private JPanel eastPanel = new JPanel();
     private JPanel handPanel = new JPanel();
+    private int playerNumber = 0;
 
     
     long now = System.currentTimeMillis();
     long timeCheck;
 
-
+    /**
+     * Constructs a GUI
+     * @param game	Object controlling the game logic
+     */
     public GUI(Game game){
         this.game = game;
         createMenu();
 
     }
-
+    
+    /**
+     * Sets up the screen and displays the elements
+     */
     public void display(){
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
@@ -99,31 +106,35 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
         setLocationRelativeTo(null);
         setVisible(true);
         
-        addMouseListener(new MouseAdapter() {
-        	public void mouseReleased(MouseEvent e) {
-        		timeCheck = System.currentTimeMillis();
-        		//only consider mouse events after 500 ms to reduce accidental multiple clicks
-        		if((timeCheck - now) > 500) {
-        			onClick(e);
-        		}
-        		now = System.currentTimeMillis();
-        	}
-        });
-        
-        addKeyListener(new KeyAdapter() {
-        	public void keyReleased(KeyEvent k) {
-        		timeCheck = System.currentTimeMillis();
-        		//only consider mouse events after 200 ms to reduce accidental multiple key presses
-        			if((timeCheck - now) > 200) {
-        				onKeyPress(k);
-        			}
-        			now = System.currentTimeMillis();
-        	}
-        });
+//        addMouseListener(new MouseAdapter() {
+//        	public void mouseReleased(MouseEvent e) {
+//        		timeCheck = System.currentTimeMillis();
+//        		//only consider mouse events after 500 ms to reduce accidental multiple clicks
+//        		if((timeCheck - now) > 500) {
+//        			onClick(e);
+//        		}
+//        		now = System.currentTimeMillis();
+//        	}
+//        });
+//        
+//        addKeyListener(new KeyAdapter() {
+//        	public void keyReleased(KeyEvent k) {
+//        		timeCheck = System.currentTimeMillis();
+//        		//only consider mouse events after 200 ms to reduce accidental multiple key presses
+//        			if((timeCheck - now) > 200) {
+//        				onKeyPress(k);
+//        			}
+//        			now = System.currentTimeMillis();
+//        	}
+//        });
           
 
     }
     
+    /**
+     * Panel holding the buttons
+     * @return	Button panel
+     */
     JPanel buttonPanel() {
         JPanel container = new JPanel();            
         JPanel buttonPanel = new JPanel();       
@@ -133,6 +144,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
         JButton testTwo = new JButton("Test 2");
         newGame.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent ev) {
+        		//Pop up with drop down box for selecting the number of players
         		JPanel playersPopUp = new JPanel();
         		playersPopUp.add(new JLabel("How many players?"));
         		DefaultComboBoxModel<Integer> selections = new DefaultComboBoxModel<Integer>();
@@ -143,6 +155,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
         		selections.addElement(6);
         		JComboBox<Integer> combo = new JComboBox(selections);
         		playersPopUp.add(combo);
+        		//Checks if OK is clicked and sets up the number of players
         		int result = JOptionPane.showConfirmDialog(null, playersPopUp, "Number", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         		switch (result) {
         		case JOptionPane.OK_OPTION:
@@ -164,13 +177,16 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     
 
     
-    
+    /**
+     * Draws the initial card pack
+     */
     public void drawCardPanel() {
     	
     	cardPanel = new JPanel() {
     		@Override
     		protected void paintComponent(Graphics g) {
     			super.paintComponent(g);
+    			//Create a blank card for the back of the pack and displays it
     			Card pack = new CharacterCard("Card Pack", null);
     			CardImage picture = new CardImage(pack, 0, 0);
     			picture.paintComponent(g);
@@ -180,6 +196,10 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     	eastPanel.add(cardPanel, BorderLayout.EAST);
     }
     
+    /**
+     * Draws the cards in the current player's hand
+     * @param player	Current player
+     */
     public void drawHand(Character player) {
     	eastPanel.remove(cardPanel);
     	int total = player.getHand().getCards().size();
@@ -205,7 +225,10 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     	display();
     }
        
-    
+    /**
+     * Creates pop up for selecting the character for each player
+     * @param numPlay	Number of players
+     */
     public void playerSelection(int numPlay) {
     	JRadioButton scarlett = new JRadioButton("Miss Scarlett");
     	JRadioButton mustard = new JRadioButton("Colonel Mustard");
@@ -222,6 +245,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     	characterPopUp.add(green);
     	characterPopUp.add(peacock);
     	characterPopUp.add(plum);
+    	//Sets the players' characters according to what is selected
 		scarlett.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -271,6 +295,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
 			}
 		});
 		
+		//Displays the pop up until each player has selected a character
     	for (int i = 0; i < numPlay; i++) {
     		selected = false;
     		JOptionPane.showMessageDialog(null,  characterPopUp);
@@ -280,29 +305,55 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     	manageTurns();
     }
     
+    /**
+     * Runs through the turns for each player, from rolling the dice to moving, to making a suggestion and accusation
+     */
     public void manageTurns() {
     	game.dealCards();
-        while(!game.gameWon) {
-        	for (Character play : game.getPlayers()) {
-        		drawHand(play);
-        		JPanel diceRoll = new JPanel();
-                diceRoll.add(new JLabel(play.getName() + " press OK to roll the dice"));     
-        		JOptionPane.showMessageDialog(null, diceRoll);      			
-        		number = game.rollDice();
-        		createDice();
-        		display();
-//        		game.setCurrentChar(play);
-//        		while (game.countSteps()) {
-//        			display();
-//        		}
-//        		
-//        		game.setCurrentChar(null);
-        	}
-        }
+    	Character play = game.getPlayers().get(playerNumber);
+    	drawHand(play);
+    	JPanel diceRoll = new JPanel();
+    	diceRoll.add(new JLabel(play.getName() + " press OK to roll the dice"));     
+    	JOptionPane.showMessageDialog(null, diceRoll);      			
+    	number = game.rollDice();
+    	createDice();
+    	display();
+    	game.setCurrentChar(play);
+    	readInput();
+
     }
     
+    public void readInput() {
+    	setFocusable(true);
+        addKeyListener(new KeyAdapter() {
+        	public void keyReleased(KeyEvent k) {
+        		timeCheck = System.currentTimeMillis();
+        		//only consider mouse events after 200 ms to reduce accidental multiple key presses
+        			if((timeCheck - now) > 200) {
+        				onKeyPress(k);
+        			}
+        			now = System.currentTimeMillis();
+        	}
+        });
+        
+        addMouseListener(new MouseAdapter() {
+        	public void mouseReleased(MouseEvent e) {
+        		timeCheck = System.currentTimeMillis();
+        		//only consider mouse events after 300 ms to reduce accidental multiple clicks
+        		if((timeCheck - now) > 300) {
+        			onClick(e);
+        		}
+        		now = System.currentTimeMillis();
+        	}
+        });
+        
+   
+        
+    }
     
-    
+    /**
+     * Creates the dice panel
+     */
     public void createDice() {
     	dicePanel = new JPanel() {
     		@Override
@@ -357,21 +408,21 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     	dicePanel.setPreferredSize(new Dimension(210, 110));
     }
 
-
+    /**
+     * Updates on broadcast from the Game class
+     */
     public void update(Observable obs, Object obj){
         if (obs instanceof Game){
         	display();
         }
         else {
-            System.out.println("Error ");
+            System.out.println("Error on model update");
         }
     }
 
-    // private JOptionPane textPane = new JOptionPane();
-    // private JButton quit = new JButton();
-    //  private JMenuBar menu = new JMenuBar();
-    // private Container c = getContentPane();
-
+    /**
+     * Creates the drop down menus at the top of the screen
+     */
     public void createMenu(){
         setVisible(true);       
         JMenuBar menuBar = new JMenuBar();     
@@ -405,11 +456,17 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
 
     }
 
+    /**
+     * Resets the game if selected from the drop down menu
+     */
     public void resetGame(){
         this.game = new Game();
     }
 
-
+    
+   /**
+    * Creates the panel displaying the game board
+    */
     JPanel boardPanel = new JPanel() {
     	@Override
     	protected void paintComponent(Graphics g) {
@@ -478,7 +535,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
                     else if(c[j][i].getType().equals(Cell.Type.SPANNER)) {
                         g.drawImage(wrench, y, x, size, size, null);
                     }
-                    
+                    //Draws the characters in their initial places
                     if(c[i][j].getType().equals(Cell.Type.WHITE)) {
         				       				
         				//System.out.println("x = " + x + ", y = " + y);
@@ -571,7 +628,6 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
      */
     @Override
     public void keyPressed(KeyEvent e) {
-
     }
 
     @Override
@@ -607,20 +663,30 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     		destination = cc[indY][indX];
     		game.moveCharacter(game.getCurrentChar(), destination);
     	}
+    	if(game.countSteps()) {
+    		game.setCurrentChar(null);
+    		if (playerNumber == game.getPlayers().size()-1) {
+    			playerNumber = 0;
+    			manageTurns();
+    		}
+    		else {
+    			playerNumber ++;
+    			manageTurns();
+    		}
+    	}
     	
     }
     
     protected void onKeyPress(KeyEvent k) {
-//    	if (game.getCurrentChar() == null) {
-//    		System.out.println("Not your turn yet");
-//    		return;
-//    	}
+    	if (game.getCurrentChar() == null) {
+    		System.out.println("Not your turn yet");
+    		return;
+    	}
     	Cell currentCell = game.getCurrentChar().getLocation();
     	if(k.getKeyCode() == KeyEvent.VK_W) {
     		game.moveCharacter(game.getCurrentChar(), game.getBoard().getCells()[currentCell.getYPos() - 1][currentCell.getXPos()]);
     	}
     	else if(k.getKeyCode() == KeyEvent.VK_A) {
-    		System.out.println("move gui");
     		game.moveCharacter(game.getCurrentChar(), game.getBoard().getCells()[currentCell.getYPos()][currentCell.getXPos() - 1]);
     	}
     	else if(k.getKeyCode() == KeyEvent.VK_S) {
@@ -628,6 +694,17 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     	}
     	else if(k.getKeyCode() == KeyEvent.VK_D) {
     		game.moveCharacter(game.getCurrentChar(), game.getBoard().getCells()[currentCell.getYPos()][currentCell.getXPos() + 1]);
+    	}
+    	if(game.countSteps()) {
+    		game.setCurrentChar(null);
+    		if (playerNumber == game.getPlayers().size()-1) {
+    			playerNumber = 0;
+    			manageTurns();
+    		}
+    		else {
+    			playerNumber ++;
+    			manageTurns();
+    		}
     	}
     }
 }
