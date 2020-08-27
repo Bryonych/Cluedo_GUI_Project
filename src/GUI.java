@@ -1,3 +1,4 @@
+package viewController;
 import java.awt.*;
 import java.util.*;
 import java.util.Observer;
@@ -11,6 +12,13 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+
+import Model.Card;
+import Model.Cell;
+import Model.Character;
+import Model.CharacterCard;
+import Model.Game;
+import Model.Cell.Type;
 
 public class GUI extends JFrame implements Observer,ActionListener, MouseListener, KeyListener{
     //private static List<Character> characters = new ArrayList<Character>();
@@ -55,6 +63,10 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     private boolean selected = false;
     private int number = 3;
     private JPanel dicePanel;
+    private JPanel cardPanel = new JPanel();
+    private JPanel eastPanel = new JPanel();
+    private JPanel handPanel = new JPanel();
+
     
     long now = System.currentTimeMillis();
     long timeCheck;
@@ -74,14 +86,16 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
         setSize(WIDTH, HEIGHT);
         createMenu();
         createDice();
-        JPanel eastPanel = new JPanel();
-        eastPanel.setLayout(new BoxLayout(eastPanel, BoxLayout.PAGE_AXIS));
-        eastPanel.add(buttonPanel());
-        eastPanel.add(Box.createVerticalGlue());
-        eastPanel.add(dicePanel);       
-        
+        cardPanel.setPreferredSize(new Dimension(700, 700));
+        eastPanel.setLayout(new BorderLayout());
+        eastPanel.add(buttonPanel(), BorderLayout.NORTH);
+
+        eastPanel.add(cardPanel, BorderLayout.EAST);
+        eastPanel.add(dicePanel, BorderLayout.SOUTH);  
+        boardPanel.setPreferredSize(new Dimension(750, 750));
         add(boardPanel);
         add(eastPanel, BorderLayout.EAST);
+        //pack();
         setLocationRelativeTo(null);
         setVisible(true);
         
@@ -140,13 +154,57 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
         	}
         });
         newGame.setPreferredSize(new Dimension(100, 40));
+        container.setPreferredSize(new Dimension(310, 50));
         buttonPanel.add(newGame);
         buttonPanel.add(test);
         buttonPanel.add(testTwo);
         container.add(buttonPanel);
-        //container.setMaximumSize(new Dimension(500, 50));
         return container;  
     }
+    
+
+    
+    
+    public void drawCardPanel() {
+    	
+    	cardPanel = new JPanel() {
+    		@Override
+    		protected void paintComponent(Graphics g) {
+    			super.paintComponent(g);
+    			Card pack = new CharacterCard("Card Pack", null);
+    			CardImage picture = new CardImage(pack, 0, 0);
+    			picture.paintComponent(g);
+    		}
+    	};
+
+    	eastPanel.add(cardPanel, BorderLayout.EAST);
+    }
+    
+    public void drawHand(Character player) {
+    	eastPanel.remove(cardPanel);
+    	int total = player.getHand().getCards().size();
+    	cardPanel = new JPanel() {
+
+    		@Override
+    		protected void paintComponent(Graphics g) {
+    			super.paintComponent(g);
+    			int yCount = 0;
+    			int xCount = 0;
+    			for (int i = 0; i < total; i++) {
+    				CardImage current = (new CardImage(player.getHand().getCards().get(i), (i-xCount)*155, (yCount*205)+30));
+    				current.paintComponent(g);
+    				if (i == 3 || i == 7) {
+    					xCount += 4;
+    					yCount++;
+    				}
+    			}
+    		}
+    	};
+    	
+    	cardPanel.add(new JLabel(player.getName() + "'s Hand:"));
+    	display();
+    }
+       
     
     public void playerSelection(int numPlay) {
     	JRadioButton scarlett = new JRadioButton("Miss Scarlett");
@@ -226,16 +284,24 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     	game.dealCards();
         while(!game.gameWon) {
         	for (Character play : game.getPlayers()) {
+        		drawHand(play);
         		JPanel diceRoll = new JPanel();
-                diceRoll.add(new JLabel(play.getName() + " press OK to roll the dice"));       
+                diceRoll.add(new JLabel(play.getName() + " press OK to roll the dice"));     
         		JOptionPane.showMessageDialog(null, diceRoll);      			
         		number = game.rollDice();
         		createDice();
         		display();
-        		//dicePanel.getIgnoreRepaint();
+//        		game.setCurrentChar(play);
+//        		while (game.countSteps()) {
+//        			display();
+//        		}
+//        		
+//        		game.setCurrentChar(null);
         	}
         }
     }
+    
+    
     
     public void createDice() {
     	dicePanel = new JPanel() {
@@ -287,8 +353,8 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     				g.drawImage(six, 110, 0, 100, 100, null);
     			}
     		}
-
     	};
+    	dicePanel.setPreferredSize(new Dimension(210, 110));
     }
 
 
@@ -524,6 +590,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
         game.addObserver(gui);
         SwingUtilities.invokeLater(new Runnable() {
                 public void run(){
+                	gui.drawCardPanel();
                 	gui.display();
                 }
             });
@@ -544,11 +611,16 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     }
     
     protected void onKeyPress(KeyEvent k) {
+//    	if (game.getCurrentChar() == null) {
+//    		System.out.println("Not your turn yet");
+//    		return;
+//    	}
     	Cell currentCell = game.getCurrentChar().getLocation();
     	if(k.getKeyCode() == KeyEvent.VK_W) {
     		game.moveCharacter(game.getCurrentChar(), game.getBoard().getCells()[currentCell.getYPos() - 1][currentCell.getXPos()]);
     	}
     	else if(k.getKeyCode() == KeyEvent.VK_A) {
+    		System.out.println("move gui");
     		game.moveCharacter(game.getCurrentChar(), game.getBoard().getCells()[currentCell.getYPos()][currentCell.getXPos() - 1]);
     	}
     	else if(k.getKeyCode() == KeyEvent.VK_S) {

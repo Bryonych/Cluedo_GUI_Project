@@ -1,3 +1,4 @@
+package Model;
 import java.awt.Point;
 import java.io.IOException;
 import java.util.*;
@@ -37,6 +38,7 @@ public class Game extends Observable
     private boolean suggestionMade = false;
     private boolean suggestionRefuted = false;
     private boolean accusationMade = false;
+    private int stepCount = 0;
     private int round = 1;
 
 
@@ -181,6 +183,10 @@ public class Game extends Observable
     			players.add(c);
     		}
     	}
+    }
+    
+    public List<Card> getCards(){
+    	return allCards;
     }
 
     /**
@@ -421,6 +427,8 @@ public class Game extends Observable
             //printBoard(board.getCells());
             setChanged();
             notifyObservers();
+            System.out.println("move game");
+            stepCount++;
             return true;
         }
         //If invalid move
@@ -506,6 +514,15 @@ public class Game extends Observable
     
     public List<Character> getPlayers(){
     	return Collections.unmodifiableList(players);
+    }
+    
+    public boolean countSteps() {
+
+    	if (stepCount == dice) {
+    		stepCount = 0;
+    		return false;
+    	}
+    	return true;
     }
 
     public static void main(String[] args) throws NumberFormatException, IOException{
@@ -854,6 +871,10 @@ public class Game extends Observable
         }
     }
     
+    public void setCurrentChar(Character current) {
+    	currentTurn = current;
+    }
+    
     public Character getCurrentChar() {
     	Character cur = null;
     	for(Character ch : characters) {
@@ -863,6 +884,7 @@ public class Game extends Observable
     		}
     	}
     	return cur;
+    	//return currentTurn;
     }
 
 }
