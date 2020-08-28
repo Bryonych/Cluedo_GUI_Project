@@ -31,33 +31,33 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     private static final int size = (screenSize.width < 1500) ? 20: 25;
     private static final int space = (screenSize.height-(100+OFFSET))/30;
     private static final int HEIGHT = screenSize.height;
-
+ 
     
-    private static Image hallway = new ImageIcon("src\\Images\\yellowsquare.png").getImage();
-    private static Image wall = new ImageIcon("src\\Images\\wallimage.png").getImage();
-    private static Image Ballroom = new ImageIcon("src\\Images\\Ballroom.png").getImage();
-    private static Image billard = new ImageIcon("src\\Images\\billard.png").getImage();
-    private static Image conservatory = new ImageIcon("src\\Images\\Conservatory.png").getImage();
-    private static Image Kitchen = new ImageIcon("src\\Images\\kitchenImage.png").getImage();
-    private static Image study = new ImageIcon("src\\Images\\Study.png").getImage();
-    private static Image Hall = new ImageIcon("src\\Images\\Hall.png").getImage();
-    private static Image dinningRoom = new ImageIcon("src\\Images\\Dinningroom.png").getImage();
-    private static Image door = new ImageIcon("src\\Images\\doorway.png").getImage();
-    private static Image Library = new ImageIcon("src\\Images\\Library.png").getImage();
-    private static Image lounge = new ImageIcon("src\\Images\\lounge.png").getImage();
-    private static Image start = new ImageIcon("src\\Images\\Start.png").getImage();
-    private static Image candlestick = new ImageIcon("src\\Images\\candlestick.PNG").getImage();
-    private static Image dagger = new ImageIcon("src\\Images\\dagger.PNG").getImage();
-    private static Image leadpipe = new ImageIcon("src\\Images\\leadpipe.PNG").getImage();
-    private static Image revolver = new ImageIcon("src\\Images\\revolver.PNG").getImage();
-    private static Image rope = new ImageIcon("src\\Images\\rope.PNG").getImage();
-    private static Image wrench = new ImageIcon("src\\Images\\wrench.PNG").getImage();
-    private static Image one = new ImageIcon("src\\Images\\one.PNG").getImage();
-    private static Image two = new ImageIcon("src\\Images\\two.PNG").getImage();
-    private static Image three = new ImageIcon("src\\Images\\three.PNG").getImage();
-    private static Image four = new ImageIcon("src\\Images\\four.PNG").getImage();
-    private static Image five = new ImageIcon("src\\Images\\five.PNG").getImage();
-    private static Image six = new ImageIcon("src\\Images\\six.PNG").getImage();
+    private static Image hallway = new ImageIcon("Images/yellowsquare.png").getImage();
+    private static Image wall = new ImageIcon("Images/wallimage.png").getImage();
+    private static Image Ballroom = new ImageIcon("Images/Ballroom.png").getImage();
+    private static Image billard = new ImageIcon("Images/billard.png").getImage();
+    private static Image conservatory = new ImageIcon("Images/Conservatory.png").getImage();
+    private static Image Kitchen = new ImageIcon("Images/kitchenImage.png").getImage();
+    private static Image study = new ImageIcon("Images/Study.png").getImage();
+    private static Image Hall = new ImageIcon("Images/Hall.png").getImage();
+    private static Image dinningRoom = new ImageIcon("Images/Dinningroom.png").getImage();
+    private static Image door = new ImageIcon("Images/doorway.png").getImage();
+    private static Image Library = new ImageIcon("Images/Library.png").getImage();
+    private static Image lounge = new ImageIcon("Images/lounge.png").getImage();
+    private static Image start = new ImageIcon("Images/Start.png").getImage();
+    private static Image candlestick = new ImageIcon("Images/candlestick.PNG").getImage();
+    private static Image dagger = new ImageIcon("Images/dagger.PNG").getImage();
+    private static Image leadpipe = new ImageIcon("Images/leadpipe.PNG").getImage();
+    private static Image revolver = new ImageIcon("Images/revolver.PNG").getImage();
+    private static Image rope = new ImageIcon("Images/rope.PNG").getImage();
+    private static Image wrench = new ImageIcon("Images/wrench.PNG").getImage();
+    private static Image one = new ImageIcon("Images/one.PNG").getImage();
+    private static Image two = new ImageIcon("Images/two.PNG").getImage();
+    private static Image three = new ImageIcon("Images/three.PNG").getImage();
+    private static Image four = new ImageIcon("Images/four.PNG").getImage();
+    private static Image five = new ImageIcon("Images/five.PNG").getImage();
+    private static Image six = new ImageIcon("Images/six.PNG").getImage();
     private Game game = null;
     private boolean selected = false;
     private int number = 3;
@@ -65,18 +65,25 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     private JPanel cardPanel = new JPanel();
     private JPanel eastPanel = new JPanel();
     private JPanel handPanel = new JPanel();
+    private int playerNumber = 0;
 
     
     long now = System.currentTimeMillis();
     long timeCheck;
 
-
+    /**
+     * Constructs a GUI
+     * @param game	Object controlling the game logic
+     */
     public GUI(Game game){
         this.game = game;
         createMenu();
 
     }
-
+    
+    /**
+     * Sets up the screen and displays the elements
+     */
     public void display(){
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
@@ -97,32 +104,14 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
         //pack();
         setLocationRelativeTo(null);
         setVisible(true);
-        
-        addMouseListener(new MouseAdapter() {
-        	public void mouseReleased(MouseEvent e) {
-        		timeCheck = System.currentTimeMillis();
-        		//only consider mouse events after 500 ms to reduce accidental multiple clicks
-        		if((timeCheck - now) > 500) {
-        			onClick(e);
-        		}
-        		now = System.currentTimeMillis();
-        	}
-        });
-        
-        addKeyListener(new KeyAdapter() {
-        	public void keyReleased(KeyEvent k) {
-        		timeCheck = System.currentTimeMillis();
-        		//only consider mouse events after 200 ms to reduce accidental multiple key presses
-        			if((timeCheck - now) > 200) {
-        				onKeyPress(k);
-        			}
-        			now = System.currentTimeMillis();
-        	}
-        });
           
 
     }
     
+    /**
+     * Panel holding the buttons
+     * @return	Button panel
+     */
     JPanel buttonPanel() {
         JPanel container = new JPanel();            
         JPanel buttonPanel = new JPanel();       
@@ -132,6 +121,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
         JButton testTwo = new JButton("Test 2");
         newGame.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent ev) {
+        		//Pop up with drop down box for selecting the number of players
         		JPanel playersPopUp = new JPanel();
         		playersPopUp.add(new JLabel("How many players?"));
         		DefaultComboBoxModel<Integer> selections = new DefaultComboBoxModel<Integer>();
@@ -142,6 +132,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
         		selections.addElement(6);
         		JComboBox<Integer> combo = new JComboBox(selections);
         		playersPopUp.add(combo);
+        		//Checks if OK is clicked and sets up the number of players
         		int result = JOptionPane.showConfirmDialog(null, playersPopUp, "Number", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         		switch (result) {
         		case JOptionPane.OK_OPTION:
@@ -153,7 +144,6 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
         		boardDisplay = true;
         		display();
         	}
-        	
         });
         newGame.setPreferredSize(new Dimension(100, 40));
         container.setPreferredSize(new Dimension(310, 50));
@@ -161,19 +151,21 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
         buttonPanel.add(test);
         buttonPanel.add(testTwo);
         container.add(buttonPanel);
-        
         return container;  
     }
     
 
     
-    
+    /**
+     * Draws the initial card pack
+     */
     public void drawCardPanel() {
     	
     	cardPanel = new JPanel() {
     		@Override
     		protected void paintComponent(Graphics g) {
     			super.paintComponent(g);
+    			//Create a blank card for the back of the pack and displays it
     			Card pack = new CharacterCard("Card Pack", null);
     			CardImage picture = new CardImage(pack, 0, 0);
     			picture.paintComponent(g);
@@ -183,6 +175,10 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     	eastPanel.add(cardPanel, BorderLayout.EAST);
     }
     
+    /**
+     * Draws the cards in the current player's hand
+     * @param player	Current player
+     */
     public void drawHand(Character player) {
     	eastPanel.remove(cardPanel);
     	int total = player.getHand().getCards().size();
@@ -208,7 +204,10 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     	display();
     }
        
-    
+    /**
+     * Creates pop up for selecting the character for each player
+     * @param numPlay	Number of players
+     */
     public void playerSelection(int numPlay) {
     	JRadioButton scarlett = new JRadioButton("Miss Scarlett");
     	JRadioButton mustard = new JRadioButton("Colonel Mustard");
@@ -217,7 +216,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     	JRadioButton peacock = new JRadioButton("Mrs Peacock");
     	JRadioButton plum = new JRadioButton("Professor Plum");
     	JPanel characterPopUp = new JPanel();
-    	game.ResetPlayers();
+    	game.resetPlayers();
     	characterPopUp.add(new JLabel("Next player, please select your character\n"));
     	characterPopUp.setLayout(new BoxLayout(characterPopUp, BoxLayout.Y_AXIS));
     	characterPopUp.add(scarlett);
@@ -226,11 +225,19 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     	characterPopUp.add(green);
     	characterPopUp.add(peacock);
     	characterPopUp.add(plum);
+    	ButtonGroup bg = new ButtonGroup();
+    	bg.add(scarlett);
+    	bg.add(mustard);
+    	bg.add(white);
+    	bg.add(green);
+    	bg.add(peacock);
+    	bg.add(plum);
+    	//Sets the players' characters according to what is selected
+    	
 		scarlett.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				game.setPlayers("Miss Scarlet");
-				scarlett.setEnabled(false);
 				selected = true;
 			}
 		});
@@ -238,7 +245,6 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				game.setPlayers("Col Mustard");
-				mustard.setEnabled(false);
 				selected = true;
 			}
 		});
@@ -246,7 +252,6 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				game.setPlayers("Mrs White");
-				white.setEnabled(false);
 				selected = true;
 			}
 		});
@@ -254,7 +259,6 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				game.setPlayers("Mr Green");
-				green.setEnabled(false);
 				selected = true;
 			}
 		});
@@ -262,7 +266,6 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				game.setPlayers("Mrs Peacock");
-				peacock.setEnabled(false);
 				selected = true;
 			}
 		});
@@ -270,43 +273,74 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				game.setPlayers("Prof Plum");
-				plum.setEnabled(false);
 				selected = true;
 			}
 		});
-		System.out.println(game.getPlayers());
+		
+		//Displays the pop up until each player has selected a character
     	for (int i = 0; i < numPlay; i++) {
     		selected = false;
     		JOptionPane.showMessageDialog(null,  characterPopUp);
-    		if (!selected) i--;
+    		if (!selected) {
+    			i--;
+    		}
+    		else if (bg.getSelection() != null) {
+    			bg.getSelection().setEnabled(false);
+    		}
     	}
     	
-    	//manageTurns();
+    	manageTurns();
     }
     
+    /**
+     * Runs through the turns for each player, from rolling the dice to moving, to making a suggestion and accusation
+     */
     public void manageTurns() {
     	game.dealCards();
-        while(!game.gameWon) {
-        	for (Character play : game.getPlayers()) {
-        		drawHand(play);
-        		JPanel diceRoll = new JPanel();
-                diceRoll.add(new JLabel(play.getName() + " press OK to roll the dice"));     
-        		JOptionPane.showMessageDialog(null, diceRoll);      			
-        		number = game.rollDice();
-        		createDice();
-        		display();
-//        		game.setCurrentChar(play);
-//        		while (game.countSteps()) {
-//        			display();
-//        		}
-//        		
-//        		game.setCurrentChar(null);
-        	}
-        }
+    	Character play = game.getPlayers().get(playerNumber);
+    	drawHand(play);
+    	JPanel diceRoll = new JPanel();
+    	diceRoll.add(new JLabel(play.getName() + " press OK to roll the dice"));     
+    	JOptionPane.showMessageDialog(null, diceRoll);      			
+    	number = game.rollDice();
+    	createDice();
+    	display();
+    	game.setCurrentChar(play);
+    	readInput();
+
     }
     
+    public void readInput() {
+    	setFocusable(true);
+        addKeyListener(new KeyAdapter() {
+        	public void keyReleased(KeyEvent k) {
+        		timeCheck = System.currentTimeMillis();
+        		//only consider mouse events after 200 ms to reduce accidental multiple key presses
+        			if((timeCheck - now) > 200) {
+        				onKeyPress(k);
+        			}
+        			now = System.currentTimeMillis();
+        	}
+        });
+        
+        addMouseListener(new MouseAdapter() {
+        	public void mouseReleased(MouseEvent e) {
+        		timeCheck = System.currentTimeMillis();
+        		//only consider mouse events after 300 ms to reduce accidental multiple clicks
+        		if((timeCheck - now) > 300) {
+        			onClick(e);
+        		}
+        		now = System.currentTimeMillis();
+        	}
+        });
+        
+   
+        
+    }
     
-    
+    /**
+     * Creates the dice panel
+     */
     public void createDice() {
     	dicePanel = new JPanel() {
     		@Override
@@ -361,21 +395,21 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     	dicePanel.setPreferredSize(new Dimension(210, 110));
     }
 
-
+    /**
+     * Updates on broadcast from the Game class
+     */
     public void update(Observable obs, Object obj){
         if (obs instanceof Game){
         	display();
         }
         else {
-            System.out.println("Error ");
+            System.out.println("Error on model update");
         }
     }
 
-    // private JOptionPane textPane = new JOptionPane();
-    // private JButton quit = new JButton();
-    //  private JMenuBar menu = new JMenuBar();
-    // private Container c = getContentPane();
-
+    /**
+     * Creates the drop down menus at the top of the screen
+     */
     public void createMenu(){
         setVisible(true);       
         JMenuBar menuBar = new JMenuBar();     
@@ -409,118 +443,124 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
 
     }
 
+    /**
+     * Resets the game if selected from the drop down menu
+     */
     public void resetGame(){
         this.game = new Game();
     }
 
-
+    
+   /**
+    * Creates the panel displaying the game board
+    */
     JPanel boardPanel = new JPanel() {
     	@Override
-    	public void paintComponent(Graphics g) {
+    	protected void paintComponent(Graphics g) {
     		super.paintComponent(g);
     		if(boardDisplay) {
-    		Cell[][] c = game.getBoard().getCells();
-    		for(int i =0; i< 30; i++) {
-    			int y = OFFSET + (i * space);
-    			for(int j = 0;j< 30; j++) {
-    				int x = OFFSET + (j * space);
-                    if(c[j][i].getType().equals(Cell.Type.HALLWAY)) {
-                        g.drawImage(hallway, y, x, size, size, null);
-                        g.setColor(Color.BLACK);
-                        g.drawRect(y, x, size, size);
-                    } 
-                    else if(c[j][i].getType().equals(Cell.Type.WALL)) {
-                        g.drawImage(wall, y, x, size, size, null);
-                    }
-                    else if(c[j][i].getType().equals(Cell.Type.BALLROOM)) {
-                        g.drawImage(Ballroom, y, x, size, size, null);
-                    }
-                    else if(c[j][i].getType().equals(Cell.Type.KITCHEN)) {
-                        g.drawImage(Kitchen, y, x, size, size, null);
-                    }
-                    else if(c[j][i].getType().equals(Cell.Type.STUDY)) {
-                        g.drawImage(study, y, x, size, size, null);
-                    }
-                    else if(c[j][i].getType().equals(Cell.Type.CONSERVATORY)) {
-                        g.drawImage(conservatory, y, x, size, size, null);
-                    }
-                    else if(c[j][i].getType().equals(Cell.Type.BILLIARD)) {
-                        g.drawImage(billard, y, x, size, size, null);
-                    }
-                    else if(c[j][i].getType().equals(Cell.Type.DOOR)) {
-                        g.drawImage(door, y, x, size, size, null);
-                    }
-                    else if(c[j][i].getType().equals(Cell.Type.DINING)) {
-                        g.drawImage(dinningRoom, y, x, size, size, null);
-                    }
-                    else if(c[j][i].getType().equals(Cell.Type.HALL)) {
-                        g.drawImage(Hall, y, x, size, size, null);
-                    }
-                    else if(c[j][i].getType().equals(Cell.Type.LIBRARY)) {
-                        g.drawImage(Library, y, x, size, size, null);
-                    }
-                    else if(c[j][i].getType().equals(Cell.Type.START)) {
-                        g.drawImage(start, y, x, size, size, null);
-                    }
-                    else if(c[j][i].getType().equals(Cell.Type.LOUNGE)) {
-                        g.drawImage(lounge, y, x, size, size, null);
-                    }
-                    else if(c[j][i].getType().equals(Cell.Type.CANDLESTICK)) {
-                        g.drawImage(candlestick, y, x, size, size, null);
-                    }
-                    else if(c[j][i].getType().equals(Cell.Type.DAGGER)) {
-                        g.drawImage(dagger, y, x, size, size, null);
-                    }
-                    else if(c[j][i].getType().equals(Cell.Type.LEADPIPE)) {
-                        g.drawImage(leadpipe, y, x, size, size, null);
-                    }
-                    else if(c[j][i].getType().equals(Cell.Type.REVOLVER)) {
-                        g.drawImage(revolver, y, x, size, size, null);
-                    }
-                    else if(c[j][i].getType().equals(Cell.Type.ROPE)) {
-                        g.drawImage(rope, y, x, size, size, null);
-                    }
-                    else if(c[j][i].getType().equals(Cell.Type.SPANNER)) {
-                        g.drawImage(wrench, y, x, size, size, null);
-                    }
-                    
-                    if(c[i][j].getType().equals(Cell.Type.WHITE) && game.getPlayersS().contains("Mrs White")) {
-        				       				
-        				//System.out.println("x = " + x + ", y = " + y);
-        				g.setColor(Color.WHITE);
-        				g.fillOval(x,y,25,25);
-        				g.setColor(Color.BLACK);
-        				g.drawOval(x,y,25,25);
-        			}
-                    else if(c[i][j].getType().equals(Cell.Type.GREEN) && game.getPlayersS().contains("Mr Green")) {
-        				g.setColor(Color.GREEN);
-        				g.fillOval(x,y,25,25);
-        			}
-                    else if(c[i][j].getType().equals(Cell.Type.PEACOCK) && game.getPlayersS().contains("Mrs Peacock")) {
-        				g.setColor(Color.BLUE);
-        				g.fillOval(x,y,25,25);
-        			}
-                    else if(c[i][j].getType().equals(Cell.Type.PLUM) && game.getPlayersS().contains("Prof Plum")) {
-        				g.setColor(Color.MAGENTA);
-        				g.fillOval(x,y,25,25);
-        			}
-                    else if(c[i][j].getType().equals(Cell.Type.SCARLETT) && game.getPlayersS().contains("Miss Scarlet")) {
-        				g.setColor(Color.RED);
-        				g.fillOval(x,y,25,25);
-        			}
-                    else if(c[i][j].getType().equals(Cell.Type.MUSTARD) && game.getPlayersS().contains("Col Mustard")) {
-        				g.setColor(Color.YELLOW);
-        				g.fillOval(x,y,25,25);
-        				g.setColor(Color.BLACK);
-        				g.drawOval(x,y,25,25);
-        			}
+    			Cell[][] c = game.getBoard().getCells();
+    			for(int i =0; i< 30; i++) {
+    				int y = OFFSET + (i * space);
+    				for(int j = 0;j< 30; j++) {
+    					int x = OFFSET + (j * space);  				
+    					if(c[j][i].getType().equals(Cell.Type.HALLWAY)) {
+    						g.drawImage(hallway, y, x, size, size, null);
+    						g.setColor(Color.BLACK);
+    						g.drawRect(y, x, size, size);
+    					} 
+    					else if(c[j][i].getType().equals(Cell.Type.WALL)) {
+    						g.drawImage(wall, y, x, size, size, null);
+    					}
+    					else if(c[j][i].getType().equals(Cell.Type.BALLROOM)) {
+    						g.drawImage(Ballroom, y, x, size, size, null);
+    					}
+    					else if(c[j][i].getType().equals(Cell.Type.KITCHEN)) {
+    						g.drawImage(Kitchen, y, x, size, size, null);
+    					}
+    					else if(c[j][i].getType().equals(Cell.Type.STUDY)) {
+    						g.drawImage(study, y, x, size, size, null);
+    					}
+    					else if(c[j][i].getType().equals(Cell.Type.CONSERVATORY)) {
+    						g.drawImage(conservatory, y, x, size, size, null);
+    					}
+    					else if(c[j][i].getType().equals(Cell.Type.BILLIARD)) {
+    						g.drawImage(billard, y, x, size, size, null);
+    					}
+    					else if(c[j][i].getType().equals(Cell.Type.DOOR)) {
+    						g.drawImage(door, y, x, size, size, null);
+    					}
+    					else if(c[j][i].getType().equals(Cell.Type.DINING)) {
+    						g.drawImage(dinningRoom, y, x, size, size, null);
+    					}
+    					else if(c[j][i].getType().equals(Cell.Type.HALL)) {
+    						g.drawImage(Hall, y, x, size, size, null);
+    					}
+    					else if(c[j][i].getType().equals(Cell.Type.LIBRARY)) {
+    						g.drawImage(Library, y, x, size, size, null);
+    					}
+    					else if(c[j][i].getType().equals(Cell.Type.START)) {
+    						g.drawImage(start, y, x, size, size, null);
+    					}
+    					else if(c[j][i].getType().equals(Cell.Type.LOUNGE)) {
+    						g.drawImage(lounge, y, x, size, size, null);
+    					}
+    					else if(c[j][i].getType().equals(Cell.Type.CANDLESTICK)) {
+    						g.drawImage(candlestick, y, x, size, size, null);
+    					}
+    					else if(c[j][i].getType().equals(Cell.Type.DAGGER)) {
+    						g.drawImage(dagger, y, x, size, size, null);
+    					}
+    					else if(c[j][i].getType().equals(Cell.Type.LEADPIPE)) {
+    						g.drawImage(leadpipe, y, x, size, size, null);
+    					}
+    					else if(c[j][i].getType().equals(Cell.Type.REVOLVER)) {
+    						g.drawImage(revolver, y, x, size, size, null);
+    					}
+    					else if(c[j][i].getType().equals(Cell.Type.ROPE)) {
+    						g.drawImage(rope, y, x, size, size, null);
+    					}
+    					else if(c[j][i].getType().equals(Cell.Type.SPANNER)) {
+    						g.drawImage(wrench, y, x, size, size, null);
+    					}
+    					//Draws the characters in their initial places
+    					if(c[i][j].getType().equals(Cell.Type.WHITE)) {
 
+    						//System.out.println("x = " + x + ", y = " + y);
+    						g.setColor(Color.WHITE);
+    						g.fillOval(x,y,25,25);
+    						g.setColor(Color.BLACK);
+    						g.drawOval(x,y,25,25);
+    					}
+    					else if(c[i][j].getType().equals(Cell.Type.GREEN)) {
+    						g.setColor(Color.GREEN);
+    						g.fillOval(x,y,25,25);
+    					}
+    					else if(c[i][j].getType().equals(Cell.Type.PEACOCK)) {
+    						g.setColor(Color.BLUE);
+    						g.fillOval(x,y,25,25);
+    					}
+    					else if(c[i][j].getType().equals(Cell.Type.PLUM)) {
+    						g.setColor(Color.MAGENTA);
+    						g.fillOval(x,y,25,25);
+    					}
+    					else if(c[i][j].getType().equals(Cell.Type.SCARLETT)) {
+    						g.setColor(Color.RED);
+    						g.fillOval(x,y,25,25);
+    					}
+    					else if(c[i][j].getType().equals(Cell.Type.MUSTARD)) {
+    						g.setColor(Color.YELLOW);
+    						g.fillOval(x,y,25,25);
+    						g.setColor(Color.BLACK);
+    						g.drawOval(x,y,25,25);
+    					}
+
+    				}
     			}
     		}
     	}
-    	}
     };
-    
+
 
 
    
@@ -577,7 +617,6 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
      */
     @Override
     public void keyPressed(KeyEvent e) {
-
     }
 
     @Override
@@ -613,20 +652,30 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     		destination = cc[indY][indX];
     		game.moveCharacter(game.getCurrentChar(), destination);
     	}
+    	if(game.countSteps()) {
+    		game.setCurrentChar(null);
+    		if (playerNumber == game.getPlayers().size()-1) {
+    			playerNumber = 0;
+    			manageTurns();
+    		}
+    		else {
+    			playerNumber ++;
+    			manageTurns();
+    		}
+    	}
     	
     }
     
     protected void onKeyPress(KeyEvent k) {
-//    	if (game.getCurrentChar() == null) {
-//    		System.out.println("Not your turn yet");
-//    		return;
-//    	}
+    	if (game.getCurrentChar() == null) {
+    		System.out.println("Not your turn yet");
+    		return;
+    	}
     	Cell currentCell = game.getCurrentChar().getLocation();
     	if(k.getKeyCode() == KeyEvent.VK_W) {
     		game.moveCharacter(game.getCurrentChar(), game.getBoard().getCells()[currentCell.getYPos() - 1][currentCell.getXPos()]);
     	}
     	else if(k.getKeyCode() == KeyEvent.VK_A) {
-    		System.out.println("move gui");
     		game.moveCharacter(game.getCurrentChar(), game.getBoard().getCells()[currentCell.getYPos()][currentCell.getXPos() - 1]);
     	}
     	else if(k.getKeyCode() == KeyEvent.VK_S) {
@@ -634,6 +683,17 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     	}
     	else if(k.getKeyCode() == KeyEvent.VK_D) {
     		game.moveCharacter(game.getCurrentChar(), game.getBoard().getCells()[currentCell.getYPos()][currentCell.getXPos() + 1]);
+    	}
+    	if(game.countSteps()) {
+    		game.setCurrentChar(null);
+    		if (playerNumber == game.getPlayers().size()-1) {
+    			playerNumber = 0;
+    			manageTurns();
+    		}
+    		else {
+    			playerNumber ++;
+    			manageTurns();
+    		}
     	}
     }
 }

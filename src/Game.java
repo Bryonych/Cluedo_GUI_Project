@@ -4,17 +4,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.Observable;
 
-import Model.Cell.Type;
-import viewController.Accusation;
-import viewController.Board;
-import viewController.Hand;
-import viewController.Room;
-import viewController.RoomCard;
-import viewController.Suggestion;
-import viewController.Tuple;
-import viewController.Weapon;
-import viewController.WeaponCard;
-
 /**
  * Represents the game of Cleudo
  */
@@ -49,7 +38,7 @@ public class Game extends Observable
     private boolean suggestionMade = false;
     private boolean suggestionRefuted = false;
     private boolean accusationMade = false;
-    private int stepCount = 0;
+    public int stepCount = 0;
     private int round = 1;
 
 
@@ -436,10 +425,9 @@ public class Game extends Observable
             moving.setLocation(destination);
             destination.setIsEmpty(false);
             //printBoard(board.getCells());
+            stepCount++;
             setChanged();
             notifyObservers();
-            System.out.println("move game");
-            stepCount++;
             return true;
         }
         //If invalid move
@@ -455,7 +443,6 @@ public class Game extends Observable
         System.out.println("yPos " + destination.getYPos());
         if (destination.getType().equals(Cell.Type.WALL) || destination.getXPos() < 0 || destination.getXPos() > 29 ||
                 destination.getYPos() < 0 || destination.getYPos() > 29 || destination.getType().equals(Cell.Type.START) || !destination.getIsEmpty()){
-            System.out.println("false");
             return false;
         }
         return true;
@@ -526,6 +513,7 @@ public class Game extends Observable
     public List<Character> getPlayers(){
     	return Collections.unmodifiableList(players);
     }
+    
     public String getPlayersS() {
     	String text = "";
     	for(Character c : players) {
@@ -534,17 +522,17 @@ public class Game extends Observable
     	System.out.println(text);
     	return text;
     }
-    public static void ResetPlayers() {
+    
+    public static void resetPlayers() {
     	players = new ArrayList<Character>(); 
     }
     
     public boolean countSteps() {
-
     	if (stepCount == dice) {
     		stepCount = 0;
-    		return false;
+    		return true;
     	}
-    	return true;
+    	return false;
     }
 
     public static void main(String[] args) throws NumberFormatException, IOException{
@@ -611,7 +599,7 @@ public class Game extends Observable
         }
 
     }
-
+    
     public static String Print(Board board) {
     	String text = "";
     	Cell[][] cell = board.getCells();
@@ -623,6 +611,7 @@ public class Game extends Observable
     	}
     	return text;
     }
+
     /**
      * Displays the board on the screen
      * @param cell  Cells to be displayed
@@ -909,15 +898,15 @@ public class Game extends Observable
     }
     
     public Character getCurrentChar() {
-    	Character cur = null;
-    	for(Character ch : characters) {
-    		//TEST CODE - passing character to GUI for movement
-    		if(ch.getCharacterType() == Cell.Type.MUSTARD) {
-    			cur = ch;
-    		}
-    	}
-    	return cur;
-    	//return currentTurn;
+//    	Character cur = null;
+//    	for(Character ch : characters) {
+//    		//TEST CODE - passing character to GUI for movement
+//    		if(ch.getCharacterType() == Cell.Type.MUSTARD) {
+//    			cur = ch;
+//    		}
+//    	}
+//    	return cur;
+    	return currentTurn;
     }
 
 }
