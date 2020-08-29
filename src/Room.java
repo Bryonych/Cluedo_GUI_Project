@@ -1,4 +1,7 @@
+package viewController;
 import java.util.*;
+
+import Model.Cell;
 
 /**
  * Represents a room in the game

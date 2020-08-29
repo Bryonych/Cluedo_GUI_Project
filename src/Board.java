@@ -1,8 +1,11 @@
+package viewController;
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.30.0.5074.a43557235 modeling language!*/
 
 
 import java.util.*;
+
+import Model.Cell;
 
 /**
  * Represents the board of the game

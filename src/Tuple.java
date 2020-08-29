@@ -1,4 +1,7 @@
+package viewController;
 import java.util.*;
+
+import Model.CharacterCard;
 
 /**
  * Represents the envelope that stores the murder details

@@ -1,5 +1,10 @@
+package viewController;
 
 import java.util.*;
+
+import Model.Card;
+import Model.Character;
+import Model.CharacterCard;
 
 /**
  * A suggestion to be checked against the other players' hands

@@ -1,3 +1,5 @@
+package Model;
+
 /**
  * Respresents a character card in the game
  */

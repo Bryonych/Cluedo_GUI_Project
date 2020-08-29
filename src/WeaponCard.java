@@ -1,3 +1,7 @@
+package viewController;
+
+import Model.Card;
+
 /**
  * Represents a weapon card in the game
  */

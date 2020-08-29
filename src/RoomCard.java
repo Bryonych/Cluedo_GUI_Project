@@ -1,3 +1,7 @@
+package viewController;
+
+import Model.Card;
+
 /**
  * Represents a room card in the game
  */

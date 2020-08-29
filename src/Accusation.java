@@ -1,6 +1,10 @@
+package viewController;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import Model.Character;
+import Model.CharacterCard;
 
 /**
  * An accusation by a player to be checked against the murder details
@@ -8,9 +12,9 @@ import java.util.List;
 public class Accusation extends Tuple {
     int playerNo;
     Character accuser;
-    CharacterCard murderAccused;
-    WeaponCard weaponAccused;
-    RoomCard roomAccused;
+    public CharacterCard murderAccused;
+    public WeaponCard weaponAccused;
+    public RoomCard roomAccused;
 
     public Accusation(int playerNo, Character accuser, CharacterCard sCharacter, WeaponCard sWeapon, RoomCard sRoom) {
         super(sCharacter, sWeapon, sRoom);

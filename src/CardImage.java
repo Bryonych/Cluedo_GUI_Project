@@ -9,7 +9,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-
 import Model.Card;
 
 public class CardImage extends JComponent {
