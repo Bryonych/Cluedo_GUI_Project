@@ -657,7 +657,10 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     	int dY = Math.abs(destY - charY);    	
 
     	Cell.Type type = game.getBoard().getCells()[destY][destX].getType();
-    	if(type.equals(Cell.Type.HALLWAY) &&  (dX + dY) <= stepsRemaining) {
+    	if((type.equals(Cell.Type.HALLWAY) || type.equals(Cell.Type.DOOR) || type.equals(Cell.Type.BALLROOM)
+    			|| type.equals(Cell.Type.BILLIARD) || type.equals(Cell.Type.CONSERVATORY) || type.equals(Cell.Type.DINING)
+    			|| type.equals(Cell.Type.HALL) || type.equals(Cell.Type.KITCHEN) || type.equals(Cell.Type.LIBRARY)
+    			|| type.equals(Cell.Type.LOUNGE) || type.equals(Cell.Type.STUDY)) && (dX + dY) <= stepsRemaining) {
     			Cell destination = game.getBoard().getCells()[destY][destX];
         		game.moveCharacter(game.getCurrentChar(), destination);
         		stepsRemaining -= (dX + dY);
