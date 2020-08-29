@@ -17,6 +17,8 @@ import Model.Card;
 import Model.Cell;
 import Model.Character;
 import Model.CharacterCard;
+import Model.Game;
+import Model.Suggestion;
 import Model.Cell.Type;
 
 public class GUI extends JFrame implements Observer,ActionListener, MouseListener, KeyListener{
@@ -32,26 +34,26 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     private static final int HEIGHT = screenSize.height;
  
     
-    private static Image hallway = new ImageIcon("src//Images//yellowsquare.png").getImage();
-    private static Image wall = new ImageIcon("src//Images//wallimage.png").getImage();
-    private static Image Ballroom = new ImageIcon("src//Images//Ballroom.png").getImage();
-    private static Image billard = new ImageIcon("src//Images//billard.png").getImage();
-    private static Image conservatory = new ImageIcon("src//Images//Conservatory.png").getImage();
-    private static Image Kitchen = new ImageIcon("src//Images//kitchenImage.png").getImage();
-    private static Image study = new ImageIcon("src//Images//Study.png").getImage();
-    private static Image Hall = new ImageIcon("src//Images//Hall.png").getImage();
-    private static Image dinningRoom = new ImageIcon("src//Images//Dinningroom.png").getImage();
-    private static Image door = new ImageIcon("src//Images//doorway.png").getImage();
-    private static Image Library = new ImageIcon("src//Images//Library.png").getImage();
-    private static Image lounge = new ImageIcon("src//Images//lounge.png").getImage();
-    private static Image start = new ImageIcon("src//Images//Start.png").getImage();
-    private static Image candlestick = new ImageIcon("src//Images//candlestick.PNG").getImage();
-    private static Image dagger = new ImageIcon("src//Images//dagger.PNG").getImage();
-    private static Image leadpipe = new ImageIcon("src//Images//leadpipe.PNG").getImage();
-    private static Image revolver = new ImageIcon("src//Images//revolver.PNG").getImage();
-    private static Image rope = new ImageIcon("src//Images//rope.PNG").getImage();
-    private static Image wrench = new ImageIcon("src//Images//wrench.PNG").getImage();
-    private static Image one = new ImageIcon("src//Images//one.PNG").getImage();
+    private static Image hallway = new ImageIcon("Images/yellowsquare.png").getImage();
+    private static Image wall = new ImageIcon("Images/wallimage.png").getImage();
+    private static Image Ballroom = new ImageIcon("Images/Ballroom.png").getImage();
+    private static Image billard = new ImageIcon("Images/billard.png").getImage();
+    private static Image conservatory = new ImageIcon("Images/Conservatory.png").getImage();
+    private static Image Kitchen = new ImageIcon("Images/kitchenImage.png").getImage();
+    private static Image study = new ImageIcon("Images/Study.png").getImage();
+    private static Image Hall = new ImageIcon("Images/Hall.png").getImage();
+    private static Image dinningRoom = new ImageIcon("Images/Dinningroom.png").getImage();
+    private static Image door = new ImageIcon("Images/doorway.png").getImage();
+    private static Image Library = new ImageIcon("Images/Library.png").getImage();
+    private static Image lounge = new ImageIcon("Images/lounge.png").getImage();
+    private static Image start = new ImageIcon("Images/Start.png").getImage();
+    private static Image candlestick = new ImageIcon("Images/candlestick.PNG").getImage();
+    private static Image dagger = new ImageIcon("Images/dagger.PNG").getImage();
+    private static Image leadpipe = new ImageIcon("Images/leadpipe.PNG").getImage();
+    private static Image revolver = new ImageIcon("Images/revolver.PNG").getImage();
+    private static Image rope = new ImageIcon("Images/rope.PNG").getImage();
+    private static Image wrench = new ImageIcon("Images/wrench.PNG").getImage();
+    private static Image one = new ImageIcon("Images/one.PNG").getImage();
     private static Image two = new ImageIcon("Images/two.PNG").getImage();
     private static Image three = new ImageIcon("Images/three.PNG").getImage();
     private static Image four = new ImageIcon("Images/four.PNG").getImage();
@@ -65,6 +67,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     private JPanel eastPanel = new JPanel();
     private JPanel handPanel = new JPanel();
     private int playerNumber = 0;
+    private Card refuteCard;
 
     
     long now = System.currentTimeMillis();
@@ -287,7 +290,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     			bg.getSelection().setEnabled(false);
     		}
     	}
-    	
+    	game.dealCards();
     	manageTurns();
     }
     
@@ -295,7 +298,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
      * Runs through the turns for each player, from rolling the dice to moving, to making a suggestion and accusation
      */
     public void manageTurns() {
-    	game.dealCards();
+    	
     	Character play = game.getPlayers().get(playerNumber);
     	drawHand(play);
     	JPanel diceRoll = new JPanel();
@@ -447,6 +450,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
      */
     public void resetGame(){
         this.game = new Game();
+        display();
     }
 
     
@@ -651,17 +655,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     		destination = cc[indY][indX];
     		game.moveCharacter(game.getCurrentChar(), destination);
     	}
-    	if(game.countSteps()) {
-    		game.setCurrentChar(null);
-    		if (playerNumber == game.getPlayers().size()-1) {
-    			playerNumber = 0;
-    			manageTurns();
-    		}
-    		else {
-    			playerNumber ++;
-    			manageTurns();
-    		}
-    	}
+    	checkStep();
     	
     }
     
@@ -683,6 +677,75 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     	else if(k.getKeyCode() == KeyEvent.VK_D) {
     		game.moveCharacter(game.getCurrentChar(), game.getBoard().getCells()[currentCell.getYPos()][currentCell.getXPos() + 1]);
     	}
+    	checkStep();
+    }
+
+    
+    /**
+     * Checks if the current player can make a suggestion or if they've finished their turn
+     */
+    public void checkStep() {
+    	Character current = game.getCurrentChar();
+    	if (game.checkRoomPlay(current)) {
+    		JLabel question = new JLabel("Do you want to make a suggestion? y/n");
+    		JTextField textBox = new JTextField(); 
+    		JPanel suggestion = new JPanel();
+    		suggestion.setLayout(new BoxLayout(suggestion, 3));
+    		suggestion.add(question);
+    		suggestion.add(textBox);
+    		String answer = "y";
+    		int result = JOptionPane.showConfirmDialog(null, suggestion, "Question", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+    		switch (result) {
+    		case JOptionPane.OK_OPTION:
+    			answer = textBox.getText();
+    			break;
+    		}
+    		if (answer.equalsIgnoreCase("y")) {
+    			String weapon = null;
+    			String character = null;
+    			
+    			//Pop up to select character
+    			JPanel charSuggest = new JPanel();
+    			charSuggest.add(new JLabel("Suggest a murderer"));
+    			DefaultComboBoxModel<String> selections = new DefaultComboBoxModel<String>();
+    			selections.addElement("Mrs White");
+    			selections.addElement("Mr Green");
+    			selections.addElement("Mrs Peacock");
+    			selections.addElement("Prof Plum");
+    			selections.addElement("Miss Scarlet");
+    			selections.addElement("Col Mustard");
+    			JComboBox<String> combo = new JComboBox(selections);
+    			charSuggest.add(combo);
+    			int option = JOptionPane.showConfirmDialog(null, charSuggest, "Question", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+    			switch (option) {
+    			case JOptionPane.OK_OPTION:
+    				character = (String)combo.getSelectedItem();
+    				break;
+    			}
+    			//Pop up to select weapon
+    			JPanel weapSuggest = new JPanel();
+    			weapSuggest.add(new JLabel("Suggest a weapon"));
+    			DefaultComboBoxModel<String> dropDown = new DefaultComboBoxModel<String>();
+    			dropDown.addElement("Candlestick");
+    			dropDown.addElement("Dagger");
+    			dropDown.addElement("Lead Pipe");
+    			dropDown.addElement("Revolver");
+    			dropDown.addElement("Rope");
+    			dropDown.addElement("Spanner");
+    			JComboBox<String> newCombo = new JComboBox(dropDown);
+    			weapSuggest.add(newCombo);
+    			int optionTwo = JOptionPane.showConfirmDialog(null, weapSuggest, "Question", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+    			switch (optionTwo) {
+    			case JOptionPane.OK_OPTION:
+    				weapon = (String)newCombo.getSelectedItem();
+    				break;
+    			}
+
+    			Suggestion suggest = game.createSuggestion(weapon, character);
+    			manageSuggestion(suggest);
+    		}
+    	}
+    	//Check if the turn is over
     	if(game.countSteps()) {
     		game.setCurrentChar(null);
     		if (playerNumber == game.getPlayers().size()-1) {
@@ -694,5 +757,162 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     			manageTurns();
     		}
     	}
+    	else {
+    		readInput();
+    	}
+    }
+    
+    /**
+     * Pops up the suggestion for each player so that they can refute it
+     * @param suggest	The suggestion made
+     */
+    public void manageSuggestion(Suggestion suggest) {
+    	Character current = game.getCurrentChar();
+    	//Shows the suggestion made
+    	JPanel suggestionPanel = new JPanel() {
+    		@Override
+    		protected void paintComponent(Graphics g) {
+    			super.paintComponent(g);
+    			CardImage one = (new CardImage(suggest.getCards().get(0), 0, 80));
+    			CardImage two = (new CardImage(suggest.getCards().get(1), 155, 80));
+    			CardImage three = (new CardImage(suggest.getCards().get(2), 310, 80));
+    			one.paintComponent(g);
+    			two.paintComponent(g);
+    			three.paintComponent(g);
+    		}    			
+    	};
+    	//Pops up for each other player with their a copy of their hand and a text field for entering the refute card
+    	suggestionPanel.setPreferredSize(new Dimension(1105, 750));
+    	suggestionPanel.setLayout(new BorderLayout());
+    	for (Character c : game.getPlayers()) {
+    		if (!c.equals(current)) {    			
+    			suggestionPanel.removeAll();
+    			JPanel instructions = new JPanel();
+    			instructions.setLayout(new BoxLayout(instructions, 3));
+    			JLabel name = new JLabel(c.getName());
+    			instructions.add(name);
+    			JLabel label = new JLabel(current.getName() + " made a suggestion. Please type in your refute card or type \"no\" if you have no card to show");
+    			instructions.add(label);
+    			JTextField text = new JTextField();
+    			instructions.add(text);
+    			suggestionPanel.add(instructions, BorderLayout.NORTH);
+    			
+    			//draws the other players cards on the panel
+    			JPanel playerCards = new JPanel() {
+    				@Override
+    				protected void paintComponent(Graphics g) {
+    					super.paintComponent(g);
+    					int xCount = 0;
+    					int yCount = 0;
+    					int total = c.getHand().getCards().size();
+    					for (int i = 0; i < total; i++) {
+    						CardImage currentCard = (new CardImage(c.getHand().getCards().get(i), (i-xCount)*155, (yCount*205)+30));
+    						currentCard.paintComponent(g);
+    						if (i == 6) {
+    							xCount += 7;
+    							yCount++;
+    						}
+    					}
+    				}
+    			};
+    			playerCards.add(new JLabel(c.getName() + " your hand:"));
+    			playerCards.setPreferredSize(new Dimension(1105, 450));
+    			suggestionPanel.add(playerCards, BorderLayout.SOUTH);
+    			JOptionPane.showMessageDialog(null, suggestionPanel);
+    			String refute = text.getText();
+    			manageRefute(refute, c, suggest);
+    		}
+    	}
+    	//Move on to the next turn
+    	game.resetNoRefute();
+    	game.resetStepCount();
+    	if (playerNumber == game.getNumPlayers()-1) {
+    		playerNumber = 0;
+    	}
+    	else {
+    		playerNumber++;
+    	}
+    	manageTurns();
+    }
+    
+    /**
+     * Shows the refute card to the current player
+     * @param refute	A string version of the refute card
+     */
+    public void manageRefute(String refuteString, Character refutePlayer, Suggestion suggest){
+    	String refute = refuteString;
+    	//Check that the refute card is in the suggestion, if not take over
+    	if (!refute.equals("no") && !game.correctRefute(refuteString, suggest)) {
+    		refuteCard = game.getARefuteCard(refutePlayer, suggest);
+    		if (refuteCard == null) {
+    			refute = "no";
+    		}
+    		else {
+    			refute = refuteCard.getName();
+    		}
+    		JPanel noSuggest = new JPanel();
+			noSuggest.add(new JLabel("That is not in the suggestion. We will decide for you"));
+			JOptionPane.showMessageDialog(null, noSuggest);
+    	}
+    	//If no is selected, check if it is valid and take over if not
+    	if (refute.equalsIgnoreCase("no")) {
+    		Card noRefuteCard = game.checkNoRefute(refuteString, refutePlayer, suggest);
+    		if (noRefuteCard == null) {
+    			JPanel noRefute = new JPanel();
+    			noRefute.add(new JLabel(refutePlayer.getName() + " has no cards to show"));
+    			JOptionPane.showMessageDialog(null, noRefute);
+    			//If no one could refute - offer an accusation opportunity
+    			game.countNos();
+    			if (game.checkNos()) {
+    				manageAccusation();
+    			}
+    			return;
+    		}
+    		else {
+    			refute = noRefuteCard.getName();
+    			JPanel dialog = new JPanel();
+    			dialog.add(new JLabel("You have " + refute + " card to show"));
+    			JOptionPane.showMessageDialog(null, dialog);    			
+    		}
+    	}
+    	//If the refute card is not in their had, take over
+    	else if (!game.checkRefuteCard(refute, refutePlayer)) {
+    		refuteCard = game.getARefuteCard(refutePlayer, suggest);
+    		if (refuteCard == null) {
+    			JPanel noRefute = new JPanel();
+    			noRefute.add(new JLabel(refutePlayer.getName() + " has no cards to show"));
+    			JOptionPane.showMessageDialog(null, noRefute);
+    			return;
+    		}
+    		else {
+    			JPanel wrongSelection  = new JPanel();
+    			wrongSelection.add(new JLabel("You don't have that card, we will suggest " + refuteCard.getName()));
+    			JOptionPane.showMessageDialog(null, wrongSelection);
+    			refute = refuteCard.getName();
+    		}
+    	}
+    	//Display the refute card
+    	for (Card c : game.getCards()) {
+    		if (c.getName().equals(refute)) {
+    			refuteCard = c;
+    		}
+    	}
+    	JPanel refutePanel = new JPanel() {
+    		@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				CardImage show = (new CardImage(refuteCard, 0, 50));
+				show.paintComponent(g);
+    		}
+    	};
+    	refutePanel.add(new JLabel(refutePlayer.getName() + " refuted with:"));
+    	refutePanel.setPreferredSize(new Dimension(200, 300));
+    	JOptionPane.showMessageDialog(null, refutePanel);
+    }
+    
+    public void manageAccusation() {
+    	//TODO
     }
 }
+
+

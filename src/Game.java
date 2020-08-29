@@ -1,14 +1,11 @@
-package viewController;
+package Model;
 import java.awt.Point;
 import java.io.IOException;
 import java.util.*;
 import java.util.Observable;
 
-import Model.Card;
-import Model.Cell;
-import Model.Character;
-import Model.CharacterCard;
-import Model.Cell.Type;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * Represents the game of Cleudo
@@ -42,12 +39,13 @@ public class Game extends Observable
     private static boolean roomplay = false;
     private static int stepsRemaining = 1;
     private static int numPlayers;
-    private static int countPlayersTurn = 0;
     private boolean suggestionMade = false;
     private boolean suggestionRefuted = false;
     private boolean accusationMade = false;
     public int stepCount = 0;
     private int round = 1;
+    private static int countPlayersTurn = 0;
+    private int noRefute = 0;
     private String characterChecker = "";
 
 
@@ -58,7 +56,6 @@ public class Game extends Observable
     public Game(){
         board = createBoard();
         this.numPlayers = numPlayers;
-        players = new ArrayList<Character>();
         createRooms();
         createWeapons();
         createCharacters();
@@ -137,6 +134,71 @@ public class Game extends Observable
     public Board getBoard(){
         return board;
     }
+    
+    public static void TestMainGame(Game g,List<Character> players) {
+        //Testing for the players and the right amount
+    	if(players.size() < 2 || players.size() > 6) {
+    		throw new IllegalArgumentException("Wrong Amount of Players");
+    	}
+        //Until the game is finished, allow each player to have a turn in order
+        while(!g.gameWon) {
+           Turns(g,players);
+        }
+
+    }
+    
+    public static void Turns(Game game,List<Character> players) {
+    	int count = 0;
+    	 for (Character play : players) {
+    		 if(countPlayersTurn == players.size()) {
+    			 countPlayersTurn = 1;
+    		 }
+             count++;
+             int diceRoll = game.rollDice();
+             System.out.println("Player " + count + " " + play.getName() + " Your Turn");
+             Scanner scan = new Scanner(System.in);
+             System.out.println("Please press D to roll the dice");
+             while(!scan.nextLine().equalsIgnoreCase("d")){
+                 //pausing until dice rolled
+             }
+             System.out.println("You have rolled a: " + diceRoll);
+            game.setChanged();
+             //game.notifyObservers();
+             game.keyRead(diceRoll, play);
+             if(roomplay) {
+                 System.out.println("=== Whats on your HAND for reference === ");
+                 System.out.print(play.getHand());
+                 game.createSuggestion(play.getHand().getCards(), play);
+                 roomplay = false;
+             }
+             if(game.suggestionMade) {
+                 System.out.println(game.suggestion.toString());
+                 for (Character c : players) {
+                     if (!c.equals(play)) {
+                         int index = players.indexOf(c) +1;
+                         System.out.println("Player " + index + " has refuted your suggestion with:\n");
+                         game.refuteSuggestion(c, game.suggestion);
+                     }
+                 }
+                 if(!game.suggestionRefuted) {
+                     System.out.println("Your suggestion has not been refuted, would you like to make an accusation? (y/n)");
+                     Scanner scan2 = new Scanner(System.in);
+                     if(scan2.nextLine().equalsIgnoreCase("y")) {
+                         game.accusation = game.suggestion.toAccusation();
+                         game.accusationMade = true;
+                         System.out.println("Accusation Made!!\n" + game.accusation.toString());
+                     }
+                 }
+             }
+             if(game.accusationMade) {
+                 System.out.println("Checking Accusation");
+                 game.checkAccusation(game.accusation);
+                 if (game.gameWon) { break; }
+             }
+         }
+         count = 0;
+         game.round++;
+     }
 
     /**
      * Sets doors and start cells in the walls
@@ -187,32 +249,37 @@ public class Game extends Observable
         characters.add(mustard);
     }
     
+    /**
+     * Adds the new players to the players list
+     * @param character	Character the player has chosen
+     */
     public void setPlayers(String character) {
-    if(players.size() != 0) {
-    	for(Character a : players) {
-    		if(a.getName().equals(character)) {
-    			throw new IllegalArgumentException("Player Already Selected");
+    	if(players.size() != 0) {
+    		for(Character a : players) {
+    			if(a.getName().equals(character)) {
+    				throw new IllegalArgumentException("Player Already Selected");
+    			}
     		}
     	}
-    }
-   	for (Character c : characters) {
-   		if(!characterChecker.contains(c.getName())) {
-    		if (c.getName().equals(character)) {
-    			players.add(c);
-    			characterChecker += character + " ";
-    			break;
+    	for (Character c : characters) {
+    		if(!characterChecker.contains(c.getName())) {
+    			if (c.getName().equals(character)) {
+    				players.add(c);
+    				characterChecker += character + " ";
+    				break;
+    			}
     		}
     	}
-   	}
-    	
+
     }
+
     public static void Print(List<Character> t) {
     	for(Character a : t) {
     		System.out.println(a.getName());
     	}
     	System.out.println("-------------");
     }
-    
+
     public List<Card> getCards(){
     	return allCards;
     }
@@ -439,7 +506,7 @@ public class Game extends Observable
 
     }
     /**
-     * Moves Character on the board
+     * Moves Chracter on the board
      * @param moving        Character to be moved
      * @param destination   Cell to move them to
      */
@@ -473,7 +540,6 @@ public class Game extends Observable
      * @return              Whether move is valid
      */
     public boolean isValidMove(Cell destination){
-        //System.out.println("yPos " + destination.getYPos());
         if (destination.getType().equals(Cell.Type.WALL) || destination.getXPos() < 0 || destination.getXPos() > 29 ||
                 destination.getYPos() < 0 || destination.getYPos() > 29 || destination.getType().equals(Cell.Type.START) || !destination.getIsEmpty()){
             return false;
@@ -524,7 +590,6 @@ public class Game extends Observable
             Scanner scan = new Scanner(System.in);
             System.out.println("How many players?");
             numPlayers = scan.nextInt();
-            
             if (numPlayers < 2 || numPlayers > 6){
                 System.out.println("Number must bet 2 - 6. How many players?");
                 checkNumPlayers();
@@ -568,85 +633,21 @@ public class Game extends Observable
     	}
     	return false;
     }
+    
+    public void resetStepCount() {
+    	stepCount = 0;
+    }
 
     public static void main(String[] args) throws NumberFormatException, IOException{
     	Game game = new Game();
     	game.createBoard();
-    	 game.dealCards();
+    	game.dealCards();
     	TestMainGame(game,game.setPlayers());
 
-
-
     }
-   
-    public static void TestMainGame(Game g,List<Character> players) {
-        //Testing for the players and the right amount
-    	if(players.size() < 2 || players.size() > 6) {
-    		throw new IllegalArgumentException("Wrong Amount of Players");
-    	}
-        //Until the game is finished, allow each player to have a turn in order
-        while(!g.gameWon) {
-           Turns(g,players);
-        }
-    }
-    public static void Turns(Game game,List<Character> players) {
-    	int count = 0;
-    	 for (Character play : players) {
-    		 if(countPlayersTurn == players.size()) {
-    			 countPlayersTurn = 1;
-    		 }
-             count++;
-             int diceRoll = game.rollDice();
-             System.out.println("Player " + count + " " + play.getName() + " Your Turn");
-             Scanner scan = new Scanner(System.in);
-             System.out.println("Please press D to roll the dice");
-             while(!scan.nextLine().equalsIgnoreCase("d")){
-                 //pausing until dice rolled
-             }
-             System.out.println("You have rolled a: " + diceRoll);
-            game.setChanged();
-             //game.notifyObservers();
-             game.keyRead(diceRoll, play);
-             if(roomplay) {
-                 System.out.println("=== Whats on your HAND for reference === ");
-                 System.out.print(play.getHand());
-                 game.createSuggestion(play.getHand().getCards(), play);
-                 roomplay = false;
-             }
-             if(game.suggestionMade) {
-                 System.out.println(game.suggestion.toString());
-                 for (Character c : players) {
-                     if (!c.equals(play)) {
-                         int index = players.indexOf(c) +1;
-                         System.out.println("Player " + index + " has refuted your suggestion with:\n");
-                         game.refuteSuggestion(c, game.suggestion);
-                     }
-                 }
-                 if(!game.suggestionRefuted) {
-                     System.out.println("Your suggestion has not been refuted, would you like to make an accusation? (y/n)");
-                     Scanner scan2 = new Scanner(System.in);
-                     if(scan2.nextLine().equalsIgnoreCase("y")) {
-                         game.accusation = game.suggestion.toAccusation();
-                         game.accusationMade = true;
-                         System.out.println("Accusation Made!!\n" + game.accusation.toString());
-                     }
-                 }
-             }
-             if(game.accusationMade) {
-                 System.out.println("Checking Accusation");
-                 game.checkAccusation(game.accusation);
-                 if (game.gameWon) { break; }
-             }
-         }
-         count = 0;
-         game.round++;
-     }
-    
-    
     
     public static String Print(Board board) {
     	String text = "";
-
     	Cell[][] cell = board.getCells();
     	for(int i = 0; i < 30; i++) {
     		for(int j = 0; j< 30; j++) {
@@ -703,7 +704,6 @@ public class Game extends Observable
         System.out.println("Press z to go up, Press q to go down, Press a to go left, Press d to right");
         while(n != 0) { // Counter, for the dice to tell how many times they can go.
             System.out.println(n);
-       
             Cell currentLoc = play.getLocation();
             celltemp.add(new Point(currentLoc.getYPos(),currentLoc.getXPos()));
             int nY = currentLoc.getYPos()+1;
@@ -714,9 +714,8 @@ public class Game extends Observable
                 try{
                     if(celltemp.contains(new Point(nY,currentLoc.getXPos()))){
                         throw new IndexOutOfBoundsException("Invalid move. Please make another choice");
-                    } else if (moveCharacter(play, board.getCells()[nY][currentLoc.getXPos()])){
+                    } else if (moveCharacter(play, board.getCells()[nY][currentLoc.getXPos()])) {
                         n--;
-                        
                         System.out.println("Remain moves: " + n);
                     }
                     else {
@@ -771,7 +770,7 @@ public class Game extends Observable
             }
 
             if(acc) {
-                if (Acc(play)) {
+            	 if (Acc(play)) {
                     System.out.println("===== Do you want to Make a SUGGESTION ? Press 'Y' or any key to continue on =====");
                     String choice = scan.nextLine();
                     if (choice.equalsIgnoreCase("Y")){
@@ -794,6 +793,7 @@ public class Game extends Observable
             System.out.println("Next Player get ready for your turn, Press any key to contiune");
         }
     }
+    
     public static boolean Acc(Character play) {
     	if(play.getCurrentRoom().equals(Cell.Type.KITCHEN) || play.getCurrentRoom().equals(Cell.Type.BALLROOM) || play.getCurrentRoom().equals(Cell.Type.CONSERVATORY) ||
         play.getCurrentRoom().equals(Cell.Type.DINING) || play.getCurrentRoom().equals(Cell.Type.BILLIARD) || play.getCurrentRoom().equals(Cell.Type.LIBRARY) ||
@@ -802,9 +802,153 @@ public class Game extends Observable
     	} else {
     		return false;
     	}
-    	
-    }
 
+    }
+    
+    /**
+     * Checks if a character is in a room while they are moving to bring up the suggestion box
+     * @param play	Current player
+     * @return		Whether they are in a room or not
+     */
+    public boolean checkRoomPlay(Character play) {
+
+    	if (play.getCurrentRoom().equals(Cell.Type.KITCHEN) || play.getCurrentRoom().equals(Cell.Type.BALLROOM) || play.getCurrentRoom().equals(Cell.Type.CONSERVATORY) ||
+    			play.getCurrentRoom().equals(Cell.Type.DINING) || play.getCurrentRoom().equals(Cell.Type.BILLIARD) || play.getCurrentRoom().equals(Cell.Type.LIBRARY) ||
+    			play.getCurrentRoom().equals(Cell.Type.LOUNGE) || play.getCurrentRoom().equals(Cell.Type.HALL) || play.getCurrentRoom().equals(Cell.Type.STUDY)) {
+    		return true;
+    	}
+    	return false;
+    }
+    
+    /**
+     * Creates a Suggestion object
+     * @param weapon	Suggested weapon
+     * @param character Suggested character
+     * @return	The suggestion object
+     */
+    public Suggestion createSuggestion(String weapon, String character) {
+    	WeaponCard suggestWeapon = null;
+    	CharacterCard suggestCharacter = null;
+    	RoomCard suggestRoom = null;
+    	Cell.Type room = currentTurn.getCurrentRoom();
+    	Room currentLoc = null;
+    	for (WeaponCard w : weaponCards) {
+    		if (w.getName().equals(weapon)) {
+    			suggestWeapon = w;
+    		}
+    	}
+    	for (CharacterCard c : charCards) {
+    		if (c.getName().equals(character)) {
+    			suggestCharacter = c;
+    		}
+    	}
+    	for (Room r : rooms) {
+    		if (r.getType().equals(room)) {
+    			currentLoc = r;
+    		}
+    	}
+    	for (RoomCard rc : roomCards) {
+    		if (rc.getRoom().equals(currentLoc)) {
+    			suggestRoom = rc;
+    		}
+    	}
+    	Suggestion suggest = new Suggestion(players.indexOf(currentTurn), currentTurn, suggestCharacter, suggestWeapon, suggestRoom);
+    	return suggest;
+    }
+    
+    /**
+     * Checks if the refute card is in the suggestion
+     * @param refuteString	Card being refuted
+     * @param suggest		Suggestion made
+     * @return				Whether the card is in the suggestion or not
+     */
+    public boolean correctRefute(String refuteString, Suggestion suggest) {
+    	Card refuteCard = null;
+    	for (Card c : allCards) {
+    		if (c.getName().equals(refuteString)) {
+    			refuteCard = c;
+    		}
+    	}
+    	if (suggest.getCards().contains(refuteCard)) {
+    		return true;
+    	}
+    	return false;
+    }
+    
+    /**
+     * If no is selected for refute card, checks the player does not have a card and returns a card if they do
+     * @param refute	Refute suggested
+     * @param player	Player refuting
+     * @param suggest	The suggestion made
+     * @return			A card if there is one, or null if not
+     */
+    public Card checkNoRefute(String refute, Character player, Suggestion suggest) {
+    	for (Card c: player.getHand().getCards()) {
+    		if (suggest.getCards().contains(c)) {
+    			return c;
+    		}
+    	}
+    	return null;
+    }
+    
+    /**
+     * Checks that the player has their refute card in their hand
+     * @param refute	Refute suggested
+     * @param player	Player refuting
+     * @return			Whether the card is in their hand or not
+     */
+    public boolean checkRefuteCard(String refute, Character player) {
+    	Card returnCard = null;
+    	for (Card c : allCards) {
+    		if (c.getName().equals(refute)) {
+    			returnCard = c;
+    		}
+    	}
+    	if (!player.getHand().getCards().contains(returnCard)) {
+    		return false;
+    	}
+    	return true;
+    }
+    
+    /**
+     * If they player has made a wrong choice, this method returns a correct card from their hand
+     * @param c			Player refuting
+     * @param suggest	Current suggestion
+     * @return			A correct card to be refuted
+     */
+    public Card getARefuteCard(Character c, Suggestion suggest) {
+    	for (Card card : suggest.getCards()) {
+    		if (c.getHand().getCards().contains(card)) {
+    			return card;
+    		}
+    	}
+    	return null;
+    }
+    
+    /**
+     * Adds to the count of people who couldn't refute
+     */
+    public void countNos() {
+    	noRefute++;
+    }
+    
+    /**
+     * Checks if all players couldn't refute
+     * @return	Whether all players couldn't refute or note
+     */
+    public boolean checkNos() {
+    	if (noRefute == numPlayers) {
+    		return true;
+    	}
+    	return false;
+    }
+    
+    /**
+     * Resets the noRefute count for the next turn
+     */
+    public void resetNoRefute() {
+    	noRefute = 0;
+    }
 
     /**
      * Prompts the user to make a suggestion
@@ -834,6 +978,11 @@ public class Game extends Observable
             }
         }
 
+//        for(RoomCard r: roomCards) {
+//            if(!playerCards.contains(r)) {
+//                roomChoice.add(r);
+//            }
+//        }
 
         System.out.println("Choose a character (enter number of character to choose):");
         int index = 1;
@@ -948,7 +1097,16 @@ public class Game extends Observable
     }
     
     public Character getCurrentChar() {
+//    	Character cur = null;
+//    	for(Character ch : characters) {
+//    		//TEST CODE - passing character to GUI for movement
+//    		if(ch.getCharacterType() == Cell.Type.MUSTARD) {
+//    			cur = ch;
+//    		}
+//    	}
+//    	return cur;
     	return currentTurn;
     }
 
 }
+
