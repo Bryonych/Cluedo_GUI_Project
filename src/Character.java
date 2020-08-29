@@ -1,5 +1,8 @@
+package Model;
 
 import java.util.*;
+
+import viewController.Hand;
 
 /**
  * Represents a character in the game
@@ -64,13 +67,13 @@ public class Character
   }
 
   public boolean canMakeSuggestions() {
-    if(makeSuggestions) {
-      return true;
-    }
-    else {
-      return false;
-    }
-  }
+	  if(makeSuggestions) {
+	      return true;
+	    }
+	    else {
+	      return false;
+	    }
+	  }
 
   public void setSuggestionStatus(boolean value) {
     makeSuggestions = value;

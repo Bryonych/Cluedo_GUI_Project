@@ -17,7 +17,6 @@ import Model.Card;
 import Model.Cell;
 import Model.Character;
 import Model.CharacterCard;
-import Model.Game;
 import Model.Cell.Type;
 
 public class GUI extends JFrame implements Observer,ActionListener, MouseListener, KeyListener{
@@ -33,26 +32,26 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     private static final int HEIGHT = screenSize.height;
  
     
-    private static Image hallway = new ImageIcon("Images/yellowsquare.png").getImage();
-    private static Image wall = new ImageIcon("Images/wallimage.png").getImage();
-    private static Image Ballroom = new ImageIcon("Images/Ballroom.png").getImage();
-    private static Image billard = new ImageIcon("Images/billard.png").getImage();
-    private static Image conservatory = new ImageIcon("Images/Conservatory.png").getImage();
-    private static Image Kitchen = new ImageIcon("Images/kitchenImage.png").getImage();
-    private static Image study = new ImageIcon("Images/Study.png").getImage();
-    private static Image Hall = new ImageIcon("Images/Hall.png").getImage();
-    private static Image dinningRoom = new ImageIcon("Images/Dinningroom.png").getImage();
-    private static Image door = new ImageIcon("Images/doorway.png").getImage();
-    private static Image Library = new ImageIcon("Images/Library.png").getImage();
-    private static Image lounge = new ImageIcon("Images/lounge.png").getImage();
-    private static Image start = new ImageIcon("Images/Start.png").getImage();
-    private static Image candlestick = new ImageIcon("Images/candlestick.PNG").getImage();
-    private static Image dagger = new ImageIcon("Images/dagger.PNG").getImage();
-    private static Image leadpipe = new ImageIcon("Images/leadpipe.PNG").getImage();
-    private static Image revolver = new ImageIcon("Images/revolver.PNG").getImage();
-    private static Image rope = new ImageIcon("Images/rope.PNG").getImage();
-    private static Image wrench = new ImageIcon("Images/wrench.PNG").getImage();
-    private static Image one = new ImageIcon("Images/one.PNG").getImage();
+    private static Image hallway = new ImageIcon("src//Images//yellowsquare.png").getImage();
+    private static Image wall = new ImageIcon("src//Images//wallimage.png").getImage();
+    private static Image Ballroom = new ImageIcon("src//Images//Ballroom.png").getImage();
+    private static Image billard = new ImageIcon("src//Images//billard.png").getImage();
+    private static Image conservatory = new ImageIcon("src//Images//Conservatory.png").getImage();
+    private static Image Kitchen = new ImageIcon("src//Images//kitchenImage.png").getImage();
+    private static Image study = new ImageIcon("src//Images//Study.png").getImage();
+    private static Image Hall = new ImageIcon("src//Images//Hall.png").getImage();
+    private static Image dinningRoom = new ImageIcon("src//Images//Dinningroom.png").getImage();
+    private static Image door = new ImageIcon("src//Images//doorway.png").getImage();
+    private static Image Library = new ImageIcon("src//Images//Library.png").getImage();
+    private static Image lounge = new ImageIcon("src//Images//lounge.png").getImage();
+    private static Image start = new ImageIcon("src//Images//Start.png").getImage();
+    private static Image candlestick = new ImageIcon("src//Images//candlestick.PNG").getImage();
+    private static Image dagger = new ImageIcon("src//Images//dagger.PNG").getImage();
+    private static Image leadpipe = new ImageIcon("src//Images//leadpipe.PNG").getImage();
+    private static Image revolver = new ImageIcon("src//Images//revolver.PNG").getImage();
+    private static Image rope = new ImageIcon("src//Images//rope.PNG").getImage();
+    private static Image wrench = new ImageIcon("src//Images//wrench.PNG").getImage();
+    private static Image one = new ImageIcon("src//Images//one.PNG").getImage();
     private static Image two = new ImageIcon("Images/two.PNG").getImage();
     private static Image three = new ImageIcon("Images/three.PNG").getImage();
     private static Image four = new ImageIcon("Images/four.PNG").getImage();
@@ -697,5 +696,3 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     	}
     }
 }
-
-
