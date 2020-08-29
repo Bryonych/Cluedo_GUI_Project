@@ -13,13 +13,8 @@ import java.awt.image.BufferedImage;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import Model.Card;
-import Model.Cell;
+import Model.*;
 import Model.Character;
-import Model.CharacterCard;
-import Model.Game;
-import Model.Suggestion;
-import Model.Cell.Type;
 
 public class GUI extends JFrame implements Observer,ActionListener, MouseListener, KeyListener{
     //private static List<Character> characters = new ArrayList<Character>();
@@ -70,8 +65,11 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     private Card refuteCard;
 
     
-    long now = System.currentTimeMillis();
-    long timeCheck;
+    private long now = System.currentTimeMillis();
+    private long timeCheck;
+    
+    private int stepsRemaining;
+    private int stepsTaken = 0;
 
     /**
      * Constructs a GUI
@@ -305,6 +303,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     	diceRoll.add(new JLabel(play.getName() + " press OK to roll the dice"));     
     	JOptionPane.showMessageDialog(null, diceRoll);      			
     	number = game.rollDice();
+    	stepsRemaining = number;
     	createDice();
     	display();
     	game.setCurrentChar(play);
@@ -531,31 +530,31 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
 
     						//System.out.println("x = " + x + ", y = " + y);
     						g.setColor(Color.WHITE);
-    						g.fillOval(x,y,25,25);
+    						g.fillOval(x,y,size,size);
     						g.setColor(Color.BLACK);
-    						g.drawOval(x,y,25,25);
+    						g.drawOval(x,y,size,size);
     					}
     					else if(c[i][j].getType().equals(Cell.Type.GREEN)) {
     						g.setColor(Color.GREEN);
-    						g.fillOval(x,y,25,25);
+    						g.fillOval(x,y,size,size);
     					}
     					else if(c[i][j].getType().equals(Cell.Type.PEACOCK)) {
     						g.setColor(Color.BLUE);
-    						g.fillOval(x,y,25,25);
+    						g.fillOval(x,y,size,size);
     					}
     					else if(c[i][j].getType().equals(Cell.Type.PLUM)) {
     						g.setColor(Color.MAGENTA);
-    						g.fillOval(x,y,25,25);
+    						g.fillOval(x,y,size,size);
     					}
     					else if(c[i][j].getType().equals(Cell.Type.SCARLETT)) {
     						g.setColor(Color.RED);
-    						g.fillOval(x,y,25,25);
+    						g.fillOval(x,y,size,size);
     					}
     					else if(c[i][j].getType().equals(Cell.Type.MUSTARD)) {
     						g.setColor(Color.YELLOW);
-    						g.fillOval(x,y,25,25);
+    						g.fillOval(x,y,size,size);
     						g.setColor(Color.BLACK);
-    						g.drawOval(x,y,25,25);
+    						g.drawOval(x,y,size,size);
     					}
 
     				}
@@ -645,16 +644,27 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     }
     
     protected void  onClick(MouseEvent e) {
-    	Cell destination = null;
     	int mouseX = e.getX();
     	int mouseY = e.getY();
-    	int indX = (mouseX - OFFSET)/30;
-    	int indY = (mouseY - OFFSET)/30;
-    	if(mouseX > OFFSET && mouseY > OFFSET && mouseX < 945 && mouseY < 945) {
-    		Cell[][] cc = game.getBoard().getCells();
-    		destination = cc[indY][indX];
-    		game.moveCharacter(game.getCurrentChar(), destination);
+    	int destX = (mouseX - OFFSET)/space;
+    	//needs an additional offset of 50 to cater for the button bar
+    	int destY = (mouseY - OFFSET - 50)/space;
+    	
+    	int charX = game.getCurrentChar().getLocation().getXPos();
+    	int charY = game.getCurrentChar().getLocation().getYPos();
+    	
+    	int dX = Math.abs(destX - charX);
+    	int dY = Math.abs(destY - charY);    	
+
+    	Cell.Type type = game.getBoard().getCells()[destY][destX].getType();
+    	if(type.equals(Cell.Type.HALLWAY) &&  (dX + dY) <= stepsRemaining) {
+    			Cell destination = game.getBoard().getCells()[destY][destX];
+        		game.moveCharacter(game.getCurrentChar(), destination);
+        		stepsRemaining -= (dX + dY);
+        		stepsTaken += dX + dY;
+        		game.stepCount = stepsTaken;
     	}
+    	
     	checkStep();
     	
     }
@@ -685,6 +695,9 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
      * Checks if the current player can make a suggestion or if they've finished their turn
      */
     public void checkStep() {
+    	if(stepsRemaining == 0) {
+    		stepsTaken = 0;
+    	}
     	Character current = game.getCurrentChar();
     	if (game.checkRoomPlay(current)) {
     		JLabel question = new JLabel("Do you want to make a suggestion? y/n");
