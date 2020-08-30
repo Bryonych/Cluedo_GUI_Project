@@ -572,8 +572,8 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("Make Accusation")) {       
-            // Game.accusationMade();
-            JOptionPane.showMessageDialog(this, " SORRY !! You cannot make an accusation now");
+           manageAccusation();
+            //JOptionPane.showMessageDialog(this, " SORRY !! You cannot make an accusation now");
         }
         if (e.getActionCommand().equals("Make Suggestion")) {
             // Game.makeSuggestionMade();
