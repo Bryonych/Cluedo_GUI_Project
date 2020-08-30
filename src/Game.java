@@ -852,6 +852,9 @@ public class Game extends Observable
     			suggestRoom = rc;
     		}
     	}
+    	moveWeapon(suggestWeapon.getWeapon(), currentLoc);
+    	moveCharacterToRoom(suggestCharacter.getCharacter(), currentLoc);
+    	
     	Suggestion suggest = new Suggestion(players.indexOf(currentTurn), currentTurn, suggestCharacter, suggestWeapon, suggestRoom);
     	return suggest;
     }
