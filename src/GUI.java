@@ -59,6 +59,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     private JPanel handPanel = new JPanel();
     private int playerNumber = 0;
     private Card refuteCard;
+    private boolean noSuggest = false;
 
     
     private long now = System.currentTimeMillis();
@@ -580,7 +581,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
             JOptionPane.showMessageDialog(this, "SORRY !! You cannot make a suggestion now");
         }
         if (e.getActionCommand().equals("Next Player")) {
-            //GameOn();
+            JOptionPane.showMessageDialog(this, game.getCurrentChar().getName());
         }
         if (e.getActionCommand().equals("Restart")) {
             JOptionPane.showMessageDialog(this, "Reset loading ....");
@@ -701,11 +702,12 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
      * Checks if the current player can make a suggestion or if they've finished their turn
      */
     public void checkStep() {
+    	
     	if(stepsRemaining == 0) {
     		stepsTaken = 0;
     	}
     	Character current = game.getCurrentChar();
-    	if (game.checkRoomPlay(current)) {
+    	if (game.checkRoomPlay(current) && !noSuggest) {
     		JLabel question = new JLabel("Do you want to make a suggestion? y/n");
     		JTextField textBox = new JTextField(); 
     		JPanel suggestion = new JPanel();
@@ -763,16 +765,21 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     			Suggestion suggest = game.createSuggestion(weapon, character);
     			manageSuggestion(suggest);
     		}
+    		if (answer.equalsIgnoreCase("n")) {
+    			noSuggest = true;
+    		}
     	}
     	//Check if the turn is over
     	if(game.countSteps()) {
     		game.setCurrentChar(null);
     		if (playerNumber == game.getPlayers().size()-1) {
     			playerNumber = 0;
+    			noSuggest = false;
     			manageTurns();
     		}
     		else {
     			playerNumber ++;
+    			noSuggest = false;
     			manageTurns();
     		}
     	}
@@ -932,44 +939,45 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
 	/**
 	 * Accusation call
 	 */
-	public void manageAccusation() {
-		Character current = game.getCurrentChar();
-		String accuseCharacter = null;
-		String accuseRoom = null;
-		String accuseWeapon = null;
+    public void manageAccusation() {
+    	Character current = game.getCurrentChar();
+    	String accuseCharacter = null;
+    	String accuseRoom = null;
+    	String accuseWeapon = null;
 
-		ArrayList<String> characterList = new ArrayList<String>(Arrays.asList("Miss Scarlett", "Col Mustard","Mrs. White", "Mr. Green", "Mrs. Peacock", "Prof Plum"));
-		ArrayList<String> roomList = new ArrayList<String>(Arrays.asList("Kitchen", "Ballroom", "Conservatory", "Billiard Room", "Library", "Study", "Hall", "Lounge", "Dining Room"));
-		ArrayList<String> weaponList = new ArrayList<String>(Arrays.asList("Candlestick", "Dagger", "Lead Pipe", "Revolver", "Rope", "Spanner"));
-		{
-			while (accuseCharacter == null) {
+    	ArrayList<String> characterList = new ArrayList<String>(Arrays.asList("Miss Scarlet", "Col Mustard","Mrs White", "Mr Green", "Mrs Peacock", "Prof Plum"));
+    	ArrayList<String> roomList = new ArrayList<String>(Arrays.asList("Kitchen", "Ball Room", "Conservatory", "Billiard Room", "Library", "Study", "Hall", "Lounge", "Dining Room"));
+    	ArrayList<String> weaponList = new ArrayList<String>(Arrays.asList("Candlestick", "Dagger", "Lead Pipe", "Revolver", "Rope", "Spanner"));
+    	{
+    		while (accuseCharacter == null) {
 
-				accuseCharacter= (String) JOptionPane.showInputDialog(null, "Character do you accuse?",
-						"" + "" + " (" + current.getName() + ")", JOptionPane.QUESTION_MESSAGE,
-						null, characterList.toArray(), characterList.toArray());
+    			accuseCharacter= (String) JOptionPane.showInputDialog(null, "Character do you accuse?",
+    					"" + "" + " (" + current.getName() + ")", JOptionPane.QUESTION_MESSAGE,
+    					null, characterList.toArray(), characterList.toArray());
 
-				while (accuseRoom == null) {
-					//try {
-					accuseRoom = (String) JOptionPane.showInputDialog(null, "Room do you accuse?",
-							"" + "" + " (" + current.getName() + ")", JOptionPane.QUESTION_MESSAGE,
-							null, roomList.toArray(), roomList.toArray());
-				}// catch (Exception e)
-			}
-			while (accuseWeapon == null) {
+    			while (accuseRoom == null) {
+    				//try {
+    				accuseRoom = (String) JOptionPane.showInputDialog(null, "Room do you accuse?",
+    						"" + "" + " (" + current.getName() + ")", JOptionPane.QUESTION_MESSAGE,
+    						null, roomList.toArray(), roomList.toArray());
+    			}// catch (Exception e)
+    		}
+    		while (accuseWeapon == null) {
 
-				accuseWeapon = (String) JOptionPane.showInputDialog(null, "Weapon do you accuse?",
-						"" + "" + " (" + current.getName() + ")", JOptionPane.QUESTION_MESSAGE,
-						null, weaponList.toArray(), weaponList.toArray());
-			}
-			if(!game.checkAccusationMade(accuseCharacter, accuseWeapon,accuseRoom)){
+    			accuseWeapon = (String) JOptionPane.showInputDialog(null, "Weapon do you accuse?",
+    					"" + "" + " (" + current.getName() + ")", JOptionPane.QUESTION_MESSAGE,
+    					null, weaponList.toArray(), weaponList.toArray());
+    		}
+    		if(game.checkAccusationMade(accuseCharacter, accuseWeapon,accuseRoom)){
 
-			JOptionPane.showMessageDialog(this, "Well Done!! " + "" + "" + " ("
-					+ current.getName() + ") You have Won");
-			System.exit(0);
+    			JOptionPane.showMessageDialog(this, "Well Done!! " + "" + "" + " ("
+    					+ current.getName() + ") You have Won");
+    			System.exit(0);
 
-		   }else { JOptionPane.showMessageDialog(this, "Incorrect Accusation !! " + "" + "" + " ("
-					+ current.getName() + ") you may make no further suggestions ");
+    		}else { JOptionPane.showMessageDialog(this, "Incorrect Accusation !! " + "" + "" + " ("
+    				+ current.getName() + ") you may make no further suggestions ");
 
+    		}
+    	}
+    }
 	}
-}
-}}
