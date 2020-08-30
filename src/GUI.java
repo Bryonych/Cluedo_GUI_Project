@@ -670,6 +670,8 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
         		stepsRemaining -= (dX + dY);
         		stepsTaken += dX + dY;
         		game.stepCount = stepsTaken;
+    	} else {
+    		JOptionPane.showMessageDialog(null, "Oops that is too many steps \n You have " + stepsRemaining + " steps");
     	}
     	
     	checkStep();
