@@ -9,27 +9,32 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
+
 import Model.Card;
 
+/**
+ * Draws the image of a card
+ *
+ */
 public class CardImage extends JComponent {
 
 	private static final long serialVersionUID = 1L;
 	private Card card;
-    private static Image Ballroom = new ImageIcon("Images/Ballroom.png").getImage();
-    private static Image billard = new ImageIcon("Images/billard.png").getImage();
-    private static Image conservatory = new ImageIcon("Images/Conservatory.png").getImage();
-    private static Image Kitchen = new ImageIcon("Images/kitchenImage.png").getImage();
-    private static Image study = new ImageIcon("Images/Study.png").getImage();
-    private static Image Hall = new ImageIcon("Images/Hall.png").getImage();
-    private static Image dinningRoom = new ImageIcon("Images/Dinningroom.png").getImage();
-    private static Image Library = new ImageIcon("Images/Library.png").getImage();
-    private static Image lounge = new ImageIcon("Images/lounge.png").getImage();
-    private static Image candlestick = new ImageIcon("Images/candlestick.PNG").getImage();
-    private static Image dagger = new ImageIcon("Images/dagger.PNG").getImage();
-    private static Image leadpipe = new ImageIcon("Images/leadpipe.PNG").getImage();
-    private static Image revolver = new ImageIcon("Images/revolver.PNG").getImage();
-    private static Image rope = new ImageIcon("Images/rope.PNG").getImage();
-    private static Image wrench = new ImageIcon("Images/wrench.PNG").getImage();
+    private static Image Ballroom = new ImageIcon("src//Images/Ballroom.png").getImage();
+    private static Image billard = new ImageIcon("src//Images/billard.png").getImage();
+    private static Image conservatory = new ImageIcon("src//Images/Conservatory.png").getImage();
+    private static Image Kitchen = new ImageIcon("src//Images/kitchenImage.png").getImage();
+    private static Image study = new ImageIcon("src//Images/Study.png").getImage();
+    private static Image Hall = new ImageIcon("src//Images/Hall.png").getImage();
+    private static Image dinningRoom = new ImageIcon("src//Images/Dinningroom.png").getImage();
+    private static Image Library = new ImageIcon("src//Images/Library.png").getImage();
+    private static Image lounge = new ImageIcon("src//Images/lounge.png").getImage();
+    private static Image candlestick = new ImageIcon("src//Images/candlestick.PNG").getImage();
+    private static Image dagger = new ImageIcon("src//Images/dagger.PNG").getImage();
+    private static Image leadpipe = new ImageIcon("src//Images/leadpipe.PNG").getImage();
+    private static Image revolver = new ImageIcon("src//Images/revolver.PNG").getImage();
+    private static Image rope = new ImageIcon("src//Images/rope.PNG").getImage();
+    private static Image wrench = new ImageIcon("src//Images/wrench.PNG").getImage();
 
     private int xPos;
     private int yPos;
@@ -41,6 +46,12 @@ public class CardImage extends JComponent {
 	private int[] yPoints = { 100, 190, 190 };
 	private String name;
 	
+	/**
+	 * Constructor
+	 * @param drawCard	Card being drawn
+	 * @param x			X Position of card
+	 * @param y			Y Position of card
+	 */
 	CardImage(Card drawCard, int x, int y){
 		this.card = drawCard;
 		this.name = card.getName();
@@ -49,6 +60,9 @@ public class CardImage extends JComponent {
 		setPolygonPoints();
 	}
 	
+	/**
+	 * Sets the points for the triangle (base) part of a character image
+	 */
 	public void setPolygonPoints() {
 		for (int i = 0; i < 3; i++) {
 			xPoints[i]+=xPos;
@@ -125,7 +139,7 @@ public class CardImage extends JComponent {
 			g.setColor(Color.WHITE);
 			g.fillOval(38+xPos, 64+yPos, 73, 73);
 			int[] innerX = { xPoints[0], xPoints[1]+1, xPoints[2]-1 };
-			int[] innerY = { yPoints[0], yPoints[1]-1, yPoints[2]-1 };
+			int[] innerY = { yPoints[0]+1, yPoints[1]-1, yPoints[2]-1 };
 			g.fillPolygon(innerX, innerY, 3);			
 			break;
 		case "Mr Green":
