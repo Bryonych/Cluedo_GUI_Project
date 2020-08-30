@@ -665,7 +665,7 @@ public class Game extends Observable
      * @return
      */
     public boolean countSteps() {
-    	if (stepCount == dice) {
+    	if (stepCount >= dice) {
     		stepCount = 0;
     		return true;
     	}
