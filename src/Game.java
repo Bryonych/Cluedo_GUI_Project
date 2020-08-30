@@ -130,23 +130,36 @@ public class Game extends Observable
         squares = setWeapons(squares);
         return new Board(squares);
     }
-
+    
+    /**
+     * Returns the board object
+     * @return	The board
+     */
     public Board getBoard(){
         return board;
     }
     
-    public static void TestMainGame(Game g,List<Character> players) {
+    /**
+     * For testing the game
+     * @param g			The game being tested
+     * @param players	The list of characters
+     */
+    public static boolean TestMainGame(Game g,List<Character> players) {
         //Testing for the players and the right amount
+    	System.out.println(players.size());
     	if(players.size() < 2 || players.size() > 6) {
-    		throw new IllegalArgumentException("Wrong Amount of Players");
+    		//throw new IllegalArgumentException("Wrong Amount of Players");
+    		return false;
     	}
-        //Until the game is finished, allow each player to have a turn in order
-        while(!g.gameWon) {
-           Turns(g,players);
-        }
 
+    	return true;
     }
     
+    /**
+     * For testing the player turns
+     * @param game		Representation of the game being tested
+     * @param players	List of players in the game
+     */
     public static void Turns(Game game,List<Character> players) {
     	int count = 0;
     	 for (Character play : players) {
@@ -254,13 +267,7 @@ public class Game extends Observable
      * @param character	Character the player has chosen
      */
     public void setPlayers(String character) {
-    	if(players.size() != 0) {
-    		for(Character a : players) {
-    			if(a.getName().equals(character)) {
-    				throw new IllegalArgumentException("Player Already Selected");
-    			}
-    		}
-    	}
+
     	for (Character c : characters) {
     		if(!characterChecker.contains(c.getName())) {
     			if (c.getName().equals(character)) {
@@ -272,14 +279,22 @@ public class Game extends Observable
     	}
 
     }
-
+    
+    /**
+     * For testing the players
+     * @param t	The list of players
+     */
     public static void Print(List<Character> t) {
     	for(Character a : t) {
     		System.out.println(a.getName());
     	}
     	System.out.println("-------------");
     }
-
+    
+    /**
+     * Returns the list of cards
+     * @return	The list of cards
+     */
     public List<Card> getCards(){
     	return allCards;
     }
@@ -416,7 +431,7 @@ public class Game extends Observable
         return new Tuple(murderer, weapon, scene);
     }
     /**
-     * Suffles the remaining cards and deals them amongst the players
+     * Shuffles the remaining cards and deals them amongst the players
      */
     public void dealCards(){
         Collections.shuffle(allCards);
@@ -601,18 +616,34 @@ public class Game extends Observable
         }
     }
     
+    /**
+     * Sets the number of players in the game
+     * @param number	The number of players
+     */
     public void setNumPlayers(int number) {
     	numPlayers = number;
     }
     
+    /**
+     * Returns the number of players in the game
+     * @return	The number of players
+     */
     public int getNumPlayers() {
     	return numPlayers;
     }
     
+    /**
+     * Method for getting the list of players
+     * @return	List of the players that can't be modified
+     */
     public List<Character> getPlayers(){
     	return Collections.unmodifiableList(players);
     }
     
+    /**
+     * Method for testing the players
+     * @return	String representation of the players
+     */
     public String getPlayersS() {
     	String text = "";
     	for(Character c : players) {
@@ -622,10 +653,17 @@ public class Game extends Observable
     	return text;
     }
     
+    /**
+     * Resets the players in the game
+     */
     public static void resetPlayers() {
     	players = new ArrayList<Character>(); 
     }
     
+    /**
+     * Checks if the player's turn is up
+     * @return
+     */
     public boolean countSteps() {
     	if (stepCount == dice) {
     		stepCount = 0;
@@ -634,9 +672,13 @@ public class Game extends Observable
     	return false;
     }
     
+    /**
+     * Resets the step count for a new players turn
+     */
     public void resetStepCount() {
     	stepCount = 0;
     }
+    
 
     public static void main(String[] args) throws NumberFormatException, IOException{
     	Game game = new Game();
@@ -646,6 +688,11 @@ public class Game extends Observable
 
     }
     
+    /**
+     * Method for testing the board
+     * @param board	The board to print	
+     * @return		String representation of the board
+     */
     public static String Print(Board board) {
     	String text = "";
     	Cell[][] cell = board.getCells();
@@ -794,6 +841,11 @@ public class Game extends Observable
         }
     }
     
+    /**
+     * Method for testing if the character is in a room
+     * @param play	Current player
+     * @return		Whether they are in a room or not
+     */
     public static boolean Acc(Character play) {
     	if(play.getCurrentRoom().equals(Cell.Type.KITCHEN) || play.getCurrentRoom().equals(Cell.Type.BALLROOM) || play.getCurrentRoom().equals(Cell.Type.CONSERVATORY) ||
         play.getCurrentRoom().equals(Cell.Type.DINING) || play.getCurrentRoom().equals(Cell.Type.BILLIARD) || play.getCurrentRoom().equals(Cell.Type.LIBRARY) ||
@@ -1137,10 +1189,18 @@ public class Game extends Observable
     	return result;
     }
     
+    /**
+     * Updates the current player having a turn
+     * @param current	Current player
+     */
     public void setCurrentChar(Character current) {
     	currentTurn = current;
     }
     
+    /**
+     * Returns the current player having a turn
+     * @return	The current player
+     */
     public Character getCurrentChar() {
     	return currentTurn;
     }
