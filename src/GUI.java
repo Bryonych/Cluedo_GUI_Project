@@ -930,7 +930,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     }
     
 	/**
-	 * accusation call
+	 * Accusation call
 	 */
 	public void manageAccusation() {
 		Character current = game.getCurrentChar();
@@ -938,8 +938,8 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
 		String accuseRoom = null;
 		String accuseWeapon = null;
 
-		ArrayList<String> characterList = new ArrayList<String>(Arrays.asList("Miss Scarlet", "Col Mustard","Mrs White", "Mr Green", "Mrs Peacock", "Prof Plum"));
-		ArrayList<String> roomList = new ArrayList<String>(Arrays.asList("Kitchen", "Ball Room", "Conservatory", "Billiard Room", "Library", "Study", "Hall", "Lounge", "Dining Room"));
+		ArrayList<String> characterList = new ArrayList<String>(Arrays.asList("Miss Scarlett", "Col Mustard","Mrs. White", "Mr. Green", "Mrs. Peacock", "Prof Plum"));
+		ArrayList<String> roomList = new ArrayList<String>(Arrays.asList("Kitchen", "Ballroom", "Conservatory", "Billiard Room", "Library", "Study", "Hall", "Lounge", "Dining Room"));
 		ArrayList<String> weaponList = new ArrayList<String>(Arrays.asList("Candlestick", "Dagger", "Lead Pipe", "Revolver", "Rope", "Spanner"));
 		{
 			while (accuseCharacter == null) {
@@ -961,21 +961,15 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
 						"" + "" + " (" + current.getName() + ")", JOptionPane.QUESTION_MESSAGE,
 						null, weaponList.toArray(), weaponList.toArray());
 			}
-			
+			if(!game.checkAccusationMade(accuseCharacter, accuseWeapon,accuseRoom)){
 
-			  //Accusation a = new Accusation(game.getPlayers().indexOf(current), current, accuseCharacter, accuseWeapon, accuseRoom);
-	          //game.accusation = game.suggestion.toAccusation();
-			  //game.accusationMade = true;
+			JOptionPane.showMessageDialog(this, "Well Done!! " + "" + "" + " ("
+					+ current.getName() + ") You have Won");
+			System.exit(0);
 
-			if (game.checkAccusationMade(accuseCharacter, accuseWeapon, accuseRoom)) {
-				//game.checkAccusation(game.accusation);
-				JOptionPane.showMessageDialog(this, "Well Done!! " + "" + "" + " ("
-						+ current.getName() + ") You have Won");
-				System.exit(0);
-
-			}
-
-		}
+		   }else { JOptionPane.showMessageDialog(this, "Incorrect Accusation !! " + "" + "" + " ("
+					+ current.getName() + ") you may make no further suggestions ");
 
 	}
 }
+}}
