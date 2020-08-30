@@ -937,7 +937,7 @@ public class Game extends Observable
      * @return	Whether all players couldn't refute or note
      */
     public boolean checkNos() {
-    	if (noRefute == numPlayers) {
+    	if (noRefute == numPlayers-1) {
     		return true;
     	}
     	return false;
@@ -1092,19 +1092,53 @@ public class Game extends Observable
         }
     }
     
+    /**
+     * Checks the accusation made against the murder details in the envelope
+     * @param accuse	The accusation made
+     * @return			Whether they match or not
+     */
+    public boolean checkAccusationMade(String character, String weapon, String room) {
+    	RoomCard accuseRoom = null;
+    	CharacterCard accuseMurderer = null;
+    	WeaponCard accuseWeapon = null;
+    	
+    	for (RoomCard r : roomCards) {
+    		if (r.getName().contentEquals(room)) {
+    			accuseRoom = r;
+    		}
+    	}
+    	for (CharacterCard c : charCards) {
+    		if (c.getName().contentEquals(character)) {
+    			accuseMurderer = c;
+    		}
+    	}
+    	
+    	for (WeaponCard w : weaponCards) {
+    		if (w.getName().contentEquals(weapon)) {
+    			accuseWeapon = w;
+    		}
+    	}
+    	
+    	Accusation accuse = new Accusation(players.indexOf(currentTurn), currentTurn, accuseMurderer, accuseWeapon, accuseRoom);
+    	
+    	boolean result = true;
+    	if (!accuse.getMurderAccused().equals(murderDetails.getMurderer())) {
+    		result = false;
+    	}
+    	if (!accuse.getWeaponAccused().equals(murderDetails.getWeapon())) {
+    		result = false;
+    	}
+    	if (!accuse.getRoomAccused().equals(murderDetails.getCrimeScene())) {
+    		result = false;
+    	}
+    	return result;
+    }
+    
     public void setCurrentChar(Character current) {
     	currentTurn = current;
     }
     
     public Character getCurrentChar() {
-//    	Character cur = null;
-//    	for(Character ch : characters) {
-//    		//TEST CODE - passing character to GUI for movement
-//    		if(ch.getCharacterType() == Cell.Type.MUSTARD) {
-//    			cur = ch;
-//    		}
-//    	}
-//    	return cur;
     	return currentTurn;
     }
 
