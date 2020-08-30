@@ -4,14 +4,9 @@ import java.util.*;
 import java.util.Observer;
 import java.util.Observable;
 import javax.swing.*;
-import javax.swing.border.*;
 import java.awt.event.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
-
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 
 import Model.*;
 import Model.Character;
@@ -54,6 +49,7 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     private static Image four = new ImageIcon("src//Images/four.PNG").getImage();
     private static Image five = new ImageIcon("src//Images/five.PNG").getImage();
     private static Image six = new ImageIcon("src//Images/six.PNG").getImage();
+    private static Image boardImage = new ImageIcon("src//Images/board.PNG").getImage();
     private Game game = null;
     private boolean selected = false;
     private int number = 3;
@@ -148,8 +144,6 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
         newGame.setPreferredSize(new Dimension(100, 40));
         container.setPreferredSize(new Dimension(310, 50));
         buttonPanel.add(newGame);
-        buttonPanel.add(test);
-        buttonPanel.add(testTwo);
         container.add(buttonPanel);
         return container;  
     }
@@ -209,6 +203,8 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
      * @param numPlay	Number of players
      */
     public void playerSelection(int numPlay) {
+    	boardDisplay = true;
+    	display();
     	JRadioButton scarlett = new JRadioButton("Miss Scarlett");
     	JRadioButton mustard = new JRadioButton("Colonel Mustard");
     	JRadioButton white = new JRadioButton("Mrs White");
@@ -559,6 +555,13 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
 
     				}
     			}
+    		}
+    		else {
+    			g.setColor(Color.getHSBColor(0, 51, 33));
+    			g.fillRect(OFFSET, OFFSET, 30*size, 30*size);
+    			g.setColor(Color.BLACK);
+    			g.drawRect(OFFSET, OFFSET, 30*size, 30*size);
+    			g.drawImage(boardImage, OFFSET+(30*size/2)-250, OFFSET+(30*size/2)-150, 500, 300, null);
     		}
     	}
     };
@@ -926,9 +929,53 @@ public class GUI extends JFrame implements Observer,ActionListener, MouseListene
     	JOptionPane.showMessageDialog(null, refutePanel);
     }
     
-    public void manageAccusation() {
-    	//TODO
-    }
+	/**
+	 * accusation call
+	 */
+	public void manageAccusation() {
+		Character current = game.getCurrentChar();
+		String accuseCharacter = null;
+		String accuseRoom = null;
+		String accuseWeapon = null;
+
+		ArrayList<String> characterList = new ArrayList<String>(Arrays.asList("Miss Scarlet", "Col Mustard","Mrs White", "Mr Green", "Mrs Peacock", "Prof Plum"));
+		ArrayList<String> roomList = new ArrayList<String>(Arrays.asList("Kitchen", "Ball Room", "Conservatory", "Billiard Room", "Library", "Study", "Hall", "Lounge", "Dining Room"));
+		ArrayList<String> weaponList = new ArrayList<String>(Arrays.asList("Candlestick", "Dagger", "Lead Pipe", "Revolver", "Rope", "Spanner"));
+		{
+			while (accuseCharacter == null) {
+
+				accuseCharacter= (String) JOptionPane.showInputDialog(null, "Character do you accuse?",
+						"" + "" + " (" + current.getName() + ")", JOptionPane.QUESTION_MESSAGE,
+						null, characterList.toArray(), characterList.toArray());
+
+				while (accuseRoom == null) {
+					//try {
+					accuseRoom = (String) JOptionPane.showInputDialog(null, "Room do you accuse?",
+							"" + "" + " (" + current.getName() + ")", JOptionPane.QUESTION_MESSAGE,
+							null, roomList.toArray(), roomList.toArray());
+				}// catch (Exception e)
+			}
+			while (accuseWeapon == null) {
+
+				accuseWeapon = (String) JOptionPane.showInputDialog(null, "Weapon do you accuse?",
+						"" + "" + " (" + current.getName() + ")", JOptionPane.QUESTION_MESSAGE,
+						null, weaponList.toArray(), weaponList.toArray());
+			}
+			
+
+			  //Accusation a = new Accusation(game.getPlayers().indexOf(current), current, accuseCharacter, accuseWeapon, accuseRoom);
+	          //game.accusation = game.suggestion.toAccusation();
+			  //game.accusationMade = true;
+
+			if (game.checkAccusationMade(accuseCharacter, accuseWeapon, accuseRoom)) {
+				//game.checkAccusation(game.accusation);
+				JOptionPane.showMessageDialog(this, "Well Done!! " + "" + "" + " ("
+						+ current.getName() + ") You have Won");
+				System.exit(0);
+
+			}
+
+		}
+
+	}
 }
-
-
